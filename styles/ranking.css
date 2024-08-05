@@ -1,0 +1,76 @@
+/* Estilos adicionales personalizados */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+    background-color: #ffcd38;
+    background-image: url(./images/loop.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+.container {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    margin-bottom: 50px;
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 50px;
+}
+.centered-text {
+    text-align: center;
+}
+.centered-text > h4{
+    font-size: 26px;
+}
+.info_ranking{
+    font-size: 20px;
+}
+.row{
+    padding: 40px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.25);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(2px);
+    /* background-color: #ffd452; */
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+    font-size: 22px;
+}
+.btn {
+    border-radius: 20px;
+    background-color: #ffc107;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+}
+.btn:hover {
+    background-color: #ffcd38;
+}
+.table thead th {
+    outline: solid 2px #212121;
+    text-align: center;
+}
+.table tbody td:nth-child(1),
+.table tbody td:nth-child(4),
+.table tbody td:nth-child(5) {
+    text-align: center;
+}
+.info-text {
+    font-size: 1.2em; /* Tamaño de fuente más grande */
+}
+.large-text {
+    font-size: 1.5em; /* Tamaño de fuente aún más grande para resaltar */
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Altura ajustada del contenedor */
+    margin-top: 10px;
+}
+td{
+    outline: solid 2px #212121;
+}

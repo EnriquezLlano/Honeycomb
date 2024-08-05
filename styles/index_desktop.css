@@ -1,0 +1,245 @@
+/* MAIN STYLES */
+body{
+    /* background-image: url(./images/blanco3.jpg); */
+    background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='29' height='50.115' patternTransform='scale(5) rotate(30)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 95%, 1)'/><path d='M14.498 16.858L0 8.488.002-8.257l14.5-8.374L29-8.26l-.002 16.745zm0 50.06L0 58.548l.002-16.745 14.5-8.373L29 41.8l-.002 16.744zM28.996 41.8l-14.498-8.37.002-16.744L29 8.312l14.498 8.37-.002 16.745zm-29 0l-14.498-8.37.002-16.744L0 8.312l14.498 8.37-.002 16.745z'  stroke-width='1.5' stroke='hsla(45, 96%, 48%, 1)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,-1.1500000000000001)' fill='url(%23a)'/></svg>");
+    /* background-repeat: no-repeat;
+    background-size: cover; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+.index_section{
+    width: 100%;
+    height: fit-content;
+}
+
+
+/* HEADER */
+.header{
+    position: absolute;
+    width: 100%;
+    height: 60px;
+}
+.header-logo{
+    display: none;
+}
+.header-title{
+    display: none;
+}
+.button_login{
+    text-decoration: none;
+    background-color: #212121;
+    border: solid 2px #fb0;
+    border-radius: 10px;
+    height: fit-content;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+.button_login:hover{
+    transition: 0.23s;
+    background-color: #fb0;
+    border: solid 2px #212121;
+    .icon{
+        transition: 0.23s;
+        stroke: #212121;
+    }
+}
+/* Menu desplegable */
+/* .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 99%;
+    right: 0;
+    background-color: #212121;
+    border: 2px solid #fb0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #fb0;
+}
+.dropdown-menu a:hover {
+    transition: 0.1s;
+    color: #212121;
+    background-color: #fb0;
+    outline: 2px solid #212121;
+} */
+
+
+/* TOP SECTION */
+/* Estilos del nombre de la escuela Tecnica Carmen M. de Llano */
+#top_section{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px auto;
+    max-width: 100%;
+    min-width: fit-content;
+    width: auto;
+}
+.llano_section{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-wrap: nowrap;
+    text-align: center;
+    justify-content: center;
+}
+#header_llano{
+    height: 50px;
+    margin-top: 10px;
+    text-align: center;
+    padding-left: 10px;
+    color: #000132;
+    font-size: 24px;
+    font-weight: 600;
+}
+/* Estilos del nombre del certamen */
+.title_container{
+    width: 75%;
+    height: 100px;
+    text-align: center;
+    margin: 10px auto;
+    color: #000132;
+    overflow: hidden;
+}
+#h1{
+    font-size: 42px;
+    font-weight: 600;
+    position: relative;
+    animation: right_to_left_animation 9s infinite linear;
+}
+/* Animacion de desplazamiento */
+@keyframes right_to_left_animation {
+    from{
+        right: -100%;
+    }
+    to{
+        right: 80%;
+    }
+}
+
+
+/* DATA SECTION */
+#data{
+    display: grid;
+    width: 60%;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: 80px 80px;
+    row-gap: 30px;
+}
+.sub_section:first-child{
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+}
+.sub_section:last-child{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: fit-content;
+}
+.element{
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
+}
+.etiqueta{
+    color: #000132;
+    font-size: 28px;
+    font-weight: 600;
+}
+.nombre{
+    color: #000;
+    font-size: 28px;
+    font-weight: 600;
+}
+.image{
+    aspect-ratio: 1/1;
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+}
+.image > img{
+    width: 100%;
+    height: 100%;
+}
+
+
+/* TIMER SECTION */
+/* Cronometro */
+#timer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.main-container{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+#cronometro{
+    background-color: #101010;
+    border-radius: 10px;
+    border: solid 4px #fa0;
+    width: 200px;
+    font-size: 72px;
+    font-weight: 300;
+    color: #fa0;
+    text-align: center;
+}
+.timer_container{
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    outline: solid 4px #101010;
+    width: 120px;
+    background-color: #fa0;
+    text-align: center;
+    font-size: 30px;
+}
+.timer_title{
+    color: #f0f0f0;
+    background-color: #101010;
+    margin-bottom: 10px;
+}
+/* Botones */
+#botones{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.boton-estilo{
+    margin: 0 5px;
+    height: fit-content;
+    min-width: fit-content;
+    max-width: 180px;
+    background-color: #fa0;
+    border-radius: 4px;
+    border: solid 2px #101010;
+    font-size: 28px;
+    text-decoration: none;
+}
+.boton-estilo:hover{
+    cursor: pointer;
+}
+.boton-estilo:focus{
+    background-color: rgb(190, 127, 0);
+}
