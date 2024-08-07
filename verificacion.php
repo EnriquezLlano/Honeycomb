@@ -12,7 +12,7 @@ $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : '';
 $instancia = isset($_GET['instancia']) ? $_GET['instancia'] : '';
 
 // Construir la consulta SQL con los filtros aplicados
-$sql = "SELECT alumnos.id as alumno_id, alumnos.nombre, performance.id as performance_id, performance.tiempo, performance.penalizacion, alumnos.nivel_id
+$sql = "SELECT alumnos.id as alumno_id, alumnos.nombre, performance.id as performance_id, performance.tiempo, performance.penalizacion, alumnos.nivel_id, performance.instancia_id
         FROM alumnos
         JOIN performance ON alumnos.id = performance.alumno_id";
 
@@ -22,7 +22,7 @@ if ($nivel) {
     $filters[] = "alumnos.nivel_id = '" . $conn->real_escape_string($nivel) . "'";
 }
 if ($instancia) {
-    $filters[] = "performance.instancia = '" . $conn->real_escape_string($instancia) . "'";
+    $filters[] = "performance.instancia_id = '" . $conn->real_escape_string($instancia) . "'";
 }
 
 if (!empty($filters)) {
@@ -43,11 +43,12 @@ if ($result->num_rows > 0) {
         $tableRows .= "<td>" . $row["tiempo"] . "</td>";
         $tableRows .= "<td>" . $row["penalizacion"] . "</td>";
         $tableRows .= "<td>" . $row["nivel_id"] . "</td>";
+        $tableRows .= "<td>" . $row["instancia_id"] . "</td>"; // Nueva columna para la instancia
         $tableRows .= "<td><input type='checkbox' name='select[]' value='" . $row["performance_id"] . "'></td>";
         $tableRows .= "</tr>";
     }
 } else {
-    $tableRows = "<tr><td colspan='5'>No se encontraron participantes</td></tr>";
+    $tableRows = "<tr><td colspan='6'>No se encontraron participantes</td></tr>"; // Ajustar colspan
 }
 
 $conn->close();
@@ -115,6 +116,7 @@ $conn->close();
                     <th>Tiempo</th>
                     <th>Penalizaciones</th>
                     <th>Nivel</th>
+                    <th>Instancia</th> <!-- Nueva columna -->
                     <th>Seleccionar</th>
                 </tr>
             </thead>
@@ -122,6 +124,7 @@ $conn->close();
                 <?php echo $tableRows; ?>
             </tbody>
         </table>
+        <br>
         <button type="submit">Guardar</button>
     </form>
 
