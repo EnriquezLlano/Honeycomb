@@ -7,14 +7,14 @@ session_start();
 $currentIndex = isset($_SESSION['current_index']) ? $_SESSION['current_index'] : 0;
 
 // Consulta SQL para obtener la información del registro actual
-$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.nombre AS instancia, a.nivel AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones
+$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.id AS instancia, a.nivel_id AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
         JOIN profesores p ON a.profesor_id = p.id
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
-        ORDER BY ins.nombre ASC, a.nivel ASC
+        ORDER BY ins.id ASC, a.nivel_id ASC
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -68,7 +68,7 @@ $conn->close();
 
 <body>
     <!-- Icono de registro/logueo -->
-    <script src="./js/menuDesplegable.js"></script>
+    <!-- <script src="./js/menuDesplegable.js"></script> -->
     <!-- <section class="lateral_section">
         posible implementacion para el sistema usuarios
         <div id="dropdown" class="dropdown-menu">
@@ -166,7 +166,6 @@ $conn->close();
             <button id="next" class="boton-estilo">Siguiente</button>
             <button id="ranking" class="boton-estilo">Ranking</button>
             <button id="reproducir" class="boton-estilo">Reproducir</button>
-            <button id="palabra" class="boton-estilo">Generar Palabra</button>
         </div>
     </section>
     <script>
@@ -305,6 +304,9 @@ $conn->close();
                 } else if (event.key === "ArrowRight") {
                     event.preventDefault();
                     document.getElementById("next").click();
+                }else if (event.key === "G" || event.key === "g"){
+                    event.preventDefault();
+                    document.getElementById("siguienteInstancia").click();
                 } else if (event.key === "+" || event.key === "-") {
                     document.getElementById(event.key === "+" ? "penaltyP" : "penaltyM").click();
                 } else if (event.key === "s" || event.key === "S") {
@@ -326,7 +328,7 @@ $conn->close();
 
             document.getElementById("ranking").addEventListener("click", function() {
                 window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
-            });
+            })
 
             togglePenaltyButton(false); // Deshabilitar botón P+ y botón de guardar al cargar la página
         });

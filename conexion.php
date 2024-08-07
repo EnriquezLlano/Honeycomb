@@ -1,13 +1,4 @@
 <?php
-// $servername = "localhost";
-// $username = "root";
-// $password = ""; // Tu contraseña de MySQL
-// $dbname = "delectrico";
-
-
-// // Crear conexión
-// $conn = new mysqli($servername, $username, $password, $dbname);
-
 function loadEnv($path) {
     if (!file_exists($path)) {
         throw new Exception(".env file not found");
@@ -23,7 +14,6 @@ function loadEnv($path) {
         $name = trim($name);
         $value = trim($value);
         
-        // Opcional: Remover comillas si están presentes
         $value = trim($value, "\"'");
 
         $_ENV[$name] = $value;
@@ -45,7 +35,5 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
-
-// Tu código aquí
 
 ?>

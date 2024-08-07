@@ -4,7 +4,7 @@ session_start();
 
 // Obtener los parámetros del nivel y la instancia
 $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "N/A";
-$instancia = isset($_GET['instancia']) ? $_GET['instancia'] : "N/A";
+$instanciaActual = isset($_GET['instancia']) ? $_GET['instancia'] : "N/A";
 
 // Consulta SQL para obtener el ranking de la performance del nivel y la instancia
 $sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones
@@ -12,9 +12,8 @@ $sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alu
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
         JOIN instancias ins ON pe.instancia_id = ins.id
-        WHERE a.nivel = '$nivel' AND ins.nombre = '$instancia'
+        WHERE a.nivel = '$nivel' AND ins.id = '$instancia'
         ORDER BY tiempo_final ASC";
-
 $result = $conn->query($sql);
 
 // Cerrar la conexión
@@ -36,7 +35,7 @@ $conn->close();
     <h4 class="h4">Escuela Técnica "Carmen Molina de Llano"</h4>
     <div>
         <div class="info_ranking">
-            <strong>Instancia:</strong> <span class="large-text"><?php echo $instancia; ?></span>
+            <strong>Instancia:</strong> <span class="large-text"><?php echo $instanciaActual; ?></span>
         </div>
         <div class="info_ranking">
             <strong>Nivel:</strong> <span class="large-text"><?php echo $nivel; ?></span>
