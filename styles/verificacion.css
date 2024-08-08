@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+.filter-container {
+    margin-bottom: 20px;
+}
+.filter-container select, .filter-container button {
+    padding: 10px;
+    margin-right: 10px;
+}
+table > h1, table > .filter-container, table > button{
+    background-color: red;
+}

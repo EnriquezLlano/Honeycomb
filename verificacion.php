@@ -93,33 +93,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Lista de Participantes</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .filter-container {
-            margin-bottom: 20px;
-        }
-        .filter-container select, .filter-container button {
-            padding: 10px;
-            margin-right: 10px;
-        }
-        table > h1, table > button, table > .filter-container{
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="./styles/verificacion.css">
 </head>
 <body>
-    <h1>Lista de Participantes</h1>
+    <h1 id="h1">Lista de Participantes</h1>
     <form id="data-form">
         <!-- Contenedor para los filtros -->
         <div class="filter-container">
@@ -159,7 +136,7 @@ $conn->close();
             </tbody>
         </table>
         <br>
-        <button type="button" onclick="guardarSeleccion()">Guardar</button>
+        <button id="botonGuardar" type="button" onclick="guardarSeleccion()">Guardar</button>
     </form>
 
     <script>

@@ -55,7 +55,6 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,7 +64,6 @@ $conn->close();
     <link rel="stylesheet" href="./styles/index_smartphone.css">
     <title>Panal de Control</title>
 </head>
-
 <body>
     <!-- Icono de registro/logueo -->
     <!-- <script src="./js/menuDesplegable.js"></script> -->

@@ -12,7 +12,7 @@ $sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alu
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
         JOIN instancias ins ON pe.instancia_id = ins.id
-        WHERE a.nivel = '$nivel' AND ins.id = '$instancia'
+        WHERE a.nivel_id = '$nivel' AND ins.id = '$instanciaActual'
         ORDER BY tiempo_final ASC";
 $result = $conn->query($sql);
 
