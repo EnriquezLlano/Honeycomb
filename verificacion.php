@@ -158,6 +158,13 @@ $conn->close();
                     // Reemplazar el contenido de la tabla con el nuevo contenido
                     tableBody.innerHTML = xhr.responseText;
                 }
+                var table = document.getElementById('participant-table');
+                table.querySelector('h1').style.display = 'none';
+                table.querySelector('.filter-container').style.display = 'none';
+                table.querySelector('button').style.display = 'none';
+                var tableBody = document.getElementById('participant-table-body');
+                tableBody.getElementById('botonGuardar').style.display = 'none';
+                tableBody.querySelector('thead').style.display = 'none';
             };
             xhr.send();
         }
