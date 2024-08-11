@@ -168,7 +168,6 @@ $conn->close();
             };
             xhr.send();
         }
-
         function guardarSeleccion() {
             var checkboxes = document.querySelectorAll('input[name="select[]"]:checked');
             var selectedIds = Array.from(checkboxes).map(checkbox => checkbox.value);

@@ -12,20 +12,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
-    if (json_last_error() === JSON_ERROR_NONE && isset($data['performance_id']) && isset($data['tiempo']) && isset($data['penalizaciones'])) {
+    if (json_last_error() === JSON_ERROR_NONE && isset($data['performance_id']) && isset($data['tiempo']) && isset($data['tiempo_oracion']) && isset($data['penalizaciones'])) {
         $performance_id = $data['performance_id'];
         $tiempo = $data['tiempo'];
         $penalizaciones = $data['penalizaciones'];
+        $tiempo_oracion = $data['tiempo_oracion'];
 
         // Preparar la consulta para actualizar los datos del participante
-        $sql_update = "UPDATE performance SET tiempo = ?, penalizacion = ? WHERE id = ?";
+        $sql_update = "UPDATE performance SET tiempo = ?, tiempo_oracion = ?,penalizacion = ? WHERE id = ?";
         $stmt = $conn->prepare($sql_update);
         if ($stmt === false) {
             echo json_encode(['success' => false, 'error' => 'Error al preparar la consulta: ' . $conn->error]);
             exit();
         }
 
-        $stmt->bind_param('ssi', $tiempo, $penalizaciones, $performance_id);
+        $stmt->bind_param('ddsi', $tiempo, $tiempo_oracion,$penalizaciones, $performance_id);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {
