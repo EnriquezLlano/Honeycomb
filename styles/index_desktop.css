@@ -224,6 +224,18 @@ body{
     background-color: #101010;
     margin-bottom: 10px;
 }
+#saved_times{
+    padding-bottom: 25px;
+}
+.times-container{
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+    width: fit-content;
+    height: 26px;
+    font-size: 26px;
+    margin: 0 auto;
+}
 /* Botones */
 #botones{
     width: 100%;

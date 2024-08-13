@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $performance_id = $data['performance_id'];
         $tiempo = $data['tiempo'];
         $penalizaciones = $data['penalizaciones'];
+        // $penalizaciones_oraciones = $data['penalizaciones_oracion'];
         $tiempo_oracion = $data['tiempo_oracion'];
 
         // Preparar la consulta para actualizar los datos del participante

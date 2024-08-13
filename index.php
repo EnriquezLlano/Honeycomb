@@ -124,6 +124,19 @@ $conn->close();
             </div>
         </section>
     </section>
+    <!-- Tiempos guardados -->
+    <section class="index_section" id="saved_times">
+        <div class="times-container">
+            <p class="tiempo-superior" id="primer_tiempo"><?php echo 'Spelling-time: ' . $tiempo_final . ' ';?></p>
+            <p class="tiempo-superior" id="segundo_tiempo"><?php 
+                if ($nivel == 3) {
+                    echo ' - Sentence-time: ' . $tiempo_oracion;
+                }else{
+                    echo '<script>document.getElementById("segundo_tiempo").style.display = "none";</script>';
+                }?>
+            </p>
+        </div>
+    </section>
     <!-- Cronometro -->
     <section class="index_section" id="timer">
         <div class="main-container">
@@ -137,16 +150,13 @@ $conn->close();
                 <div class="timer_element timer_value round-value"><?php echo $instance; ?></div>
             </div>
 
-            <div id="cronometro"><?php echo $tiempo_final;?></div>
-            <div id="segundo_cronometro">
-                <?php 
-                if ($nivel == 3) {
-                    echo $tiempo_oracion;
-                }else{
-                    echo '<script>document.getElementById("segundo_cronometro").style.display = "none";</script>';
-                }?>
-            </div>
-
+            <div id="cronometro"><?php 
+            if (is_numeric($tiempo_final)) {
+                echo $tiempo_final;
+            }else{
+                echo htmlspecialchars($tiempo_oracion);
+            }?></div>
+            
             <div class="timer_container penalty-container">
                 <div class="timer_element timer_title penalty-title">Penalty</div>
                 <div class="timer_element timer_value penalty-value"><?php echo $penalizaciones; ?></div>
@@ -182,34 +192,51 @@ $conn->close();
             let timer2;
             let running = false;
             let startTime;
+            let startSecondTime;
             let elapsedTime = 0;
             let elapsedSecondTime = 0;
             let penaltyValue = 0;
+            let secondPenaltyValue = 0;
             let startedTime = false;
+            let reseted = false;
+            let saved = false;
             let level = <?php echo isset($nivel) ? json_encode($nivel) : 'null'; ?>;
-            console.log(level);
+            let temporal;
+            console.log('Level: ' + level);
                 
             // Función para habilitar/deshabilitar botones
             function togglePenaltyButton(enable) {
                 document.getElementById("penaltyP").disabled = !enable;
+                // document.getElementById("guardar").disabled = !enable;
+            }
+            if (running) {
+                document.getElementById("penaltyP").disabled = !enable;
+                document.getElementById("penaltyM").disabled = !enable;
                 document.getElementById("guardar").disabled = !enable;
+                document.getElementById("next").disabled = !enable;
+                document.getElementById("prev").disabled = !enable;
+                document.getElementById("ranking").disabled = !enable;
+                document.getElementById("penaltyP").disabled = !enable;
             }
         
             function iniciarCronometro() {
-                if (!running) {  // Solo inicia el cronómetro si no está en ejecución
+                if (!running && reseted) {  // Solo inicia el cronómetro si no está en ejecución
                     if (level == 3) {
                         if (startedTime) {
                             // Inicia el segundo cronómetro
                             running = true;
-                            startTime = Date.now() - elapsedSecondTime;
+                            startSecondTime = Date.now() - elapsedSecondTime; // Asegúrate de que esto esté correcto
                             timer2 = setInterval(actualizarSegundoCronometro, 10);
+                            document.getElementById('cronometro').style.backgroundColor = 'green';
                         } else {
                             // Inicia el primer cronómetro
                             running = true;
                             startTime = Date.now() - elapsedTime;
                             timer = setInterval(actualizarCronometro, 10);
+                            document.getElementById('cronometro').style.backgroundColor = '#101010';
                         }
                         togglePenaltyButton(false);
+                        console.log("startedTime:", startedTime);
                         startedTime = !startedTime;
                         console.log("startedTime:", startedTime);
                     } else {
@@ -219,33 +246,44 @@ $conn->close();
                         timer = setInterval(actualizarCronometro, 10);
                         togglePenaltyButton(false);
                     }
+                    reseted = false;
                 }
             }
+
         
             function detenerCronometro() {
                 running = false;
                 clearInterval(timer);
                 clearInterval(timer2);
-                elapsedTime = Date.now() - startTime;
-                elapsedSecondTime = Date.now() - startTime;
+                if (level == 3 && startedTime) {
+                    elapsedSecondTime = Date.now() - startSecondTime; // Verifica esto                    
+                }else{
+                    elapsedTime = Date.now() - startTime;
+                }
                 togglePenaltyButton(true);
             }
+
         
             function reiniciarCronometro() {
-                running = false;
-                clearInterval(timer);
-                clearInterval(timer2);
-                elapsedTime = 0;
-                elapsedSecondTime = 0;
-                penaltyValue = 0;
-                if (level == 3 && startedTime) {
-                    document.getElementById("segundo_cronometro").innerText = "00.00";
-                } else {
+                if (!running) {
+                    if (level == 3 && startedTime) {
+                        running = false;
+                        clearInterval(timer2);
+                        elapsedSecondTime = 0;
+                        secondPenaltyValue = 0;                   
+                    }else{
+                        running = false;
+                        clearInterval(timer);
+                        elapsedTime = 0;
+                        penaltyValue = 0;
+                    }
                     document.querySelector(".penalty-value").innerText = penaltyValue;
                     document.getElementById("cronometro").innerText = "00.00";
+                    reseted = true;
+                    togglePenaltyButton(false); 
                 }
-                togglePenaltyButton(false);
             }
+
         
             function actualizarCronometro() {
                 if (running) {
@@ -259,27 +297,41 @@ $conn->close();
         
             function actualizarSegundoCronometro() {
                 if (running) {
-                    elapsedSecondTime = Date.now() - startTime;
+                    elapsedSecondTime = Date.now() - startSecondTime;
                 }
-                const totalSeconds = elapsedSecondTime / 1000;
-                const displaySegundos = Math.floor(totalSeconds).toString().padStart(2, '0');
-                const displayMilisegundos = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 100).toString().padStart(2, '0');
-                document.getElementById("segundo_cronometro").innerText = `${displaySegundos}.${displayMilisegundos}`;
+                const secondTotalSeconds = elapsedSecondTime / 1000;
+                const secondDisplaySegundos = Math.floor(secondTotalSeconds).toString().padStart(2, '0');
+                const secondDisplayMilisegundos = Math.floor((secondTotalSeconds - Math.floor(secondTotalSeconds)) * 100).toString().padStart(2, '0');
+                document.getElementById("cronometro").innerText = `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
             }
+
         
             function formatTime(totalSeconds) {
                 const secs = Math.floor(totalSeconds);
-                const ms = Math.round((totalSeconds - secs) * 100);
+                const ms = Math.floor((totalSeconds - secs) * 100);
                 const displaySegundos = secs.toString().padStart(2, '0');
                 const displayMilisegundos = ms.toString().padStart(2, '0');
+                console.log('TotalSeconds ' + totalSeconds);
+                console.log(`${displaySegundos}.${displayMilisegundos}`);
                 return `${displaySegundos}.${displayMilisegundos}`;
+            }            
+            function formatSecondTime(secondTotalSeconds) {
+                const secondSecs = Math.floor(secondTotalSeconds);
+                const secondMs = Math.floor((secondTotalSeconds - secondSecs) * 100);
+                const secondDisplaySegundos = secondSecs.toString().padStart(2, '0');
+                const secondDisplayMilisegundos = secondMs.toString().padStart(2, '0');
+                console.log('SecondTotalSeconds ' + secondTotalSeconds);
+                console.log(`${secondDisplaySegundos}.${secondDisplayMilisegundos}`)
+                return `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
             }
-        
+                    
             document.getElementById("startStop").addEventListener("click", function() {
-                if (level == 3) {
+                if (level == 3 && startedTime) {
                     if (running) {
                         detenerCronometro();
                         this.innerText = "Start";
+                        console.log('Timer2: ' + timer2);
+                        console.log('StartSecondTime: ' + startSecondTime);
                     } else {
                         iniciarCronometro();
                         this.innerText = "Stop";
@@ -288,6 +340,8 @@ $conn->close();
                     if (running) {
                         detenerCronometro();
                         this.innerText = "Start";
+                        console.log('Timer: ' + timer);
+                        console.log('StartTime: ' + startTime);
                     } else {
                         iniciarCronometro();
                         this.innerText = "Stop";
@@ -302,29 +356,52 @@ $conn->close();
         
             document.getElementById("penaltyP").addEventListener("click", function() {
                 if (!this.disabled) {
-                    penaltyValue += 1;
-                    const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
-                    document.querySelector(".penalty-value").innerText = penaltyValue;
-                    document.getElementById("cronometro").innerText = formatTime(cronometro);
+                    if (level == 3 && startedTime) {
+                        secondPenaltyValue += 1;
+                        const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                        document.querySelector(".penalty-value").innerText = secondPenaltyValue;
+                        document.getElementById("cronometro").innerText = formatSecondTime(cronometro);
+                        console.log(cronometro);
+                    }else{
+                        penaltyValue += 1;
+                        const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
+                        document.querySelector(".penalty-value").innerText = penaltyValue;
+                        document.getElementById("cronometro").innerText = formatTime(cronometro);
+                        console.log(cronometro);
+                    }
                 }
             });
         
             document.getElementById("penaltyM").addEventListener("click", function() {
                 if (penaltyValue > 0) {
-                    penaltyValue -= 1;
-                    const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
-                    document.querySelector(".penalty-value").innerText = penaltyValue;
-                    document.getElementById("cronometro").innerText = formatTime(cronometro);
+                    if (level == 3 && startedTime) {
+                        secondPenaltyValue -= 1;
+                        const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                        document.querySelector(".penalty-value").innerText = secondPenaltyValue;
+                        document.getElementById("cronometro").innerText = formatSecondTime(cronometro);    
+                        console.log(cronometro);        
+                    }else{
+                        penaltyValue -= 1;
+                        const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
+                        document.querySelector(".penalty-value").innerText = penaltyValue;
+                        document.getElementById("cronometro").innerText = formatTime(cronometro);
+                        console.log(cronometro);
+                    }
                 }
             });
         
             document.getElementById("guardar").addEventListener("click", function() {
-                const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
-                const finalSecondTime = (elapsedSecondTime / 1000) + penaltyValue * 5;
-                const formattedTime = formatTime(finalTime);
-                const formattedTimeSentence = formatTime(finalSecondTime);
-            
-                fetch('guardar.php', {
+                if (!running) {
+                    const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
+                    const finalSecondTime = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                    const formattedTime = formatTime(finalTime);
+                    const formattedTimeSentence = formatSecondTime(finalSecondTime);
+                    console.log('finalTime: ' + finalTime);
+                    console.log('finalSecondTime: ' + finalSecondTime);
+                    console.log('formattedTime: ' + formattedTime);
+                    console.log('formattedSecondTime: ' + formatSecondTime);
+                    
+                    fetch('guardar.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -333,7 +410,8 @@ $conn->close();
                             performance_id: <?php echo json_encode($performance_id); ?>,
                             tiempo: formattedTime,
                             tiempo_oracion: formattedTimeSentence,
-                            penalizaciones: penaltyValue
+                            penalizaciones: penaltyValue,
+                            penalizaciones_oracion: secondPenaltyValue
                         })
                     })
                     .then(response => response.text())
@@ -344,16 +422,17 @@ $conn->close();
                     .then(data => {
                         if (data.success) {
                             console.log(data);
+                            saved = true;
                             alert('Datos guardados exitosamente');
                         } else {
                             console.log(data);
                             alert('Error al guardar los datos: ' + data.error);
                         }
-                    })
-                    .catch(error => {
+                    }).catch(error => {
                         console.error('Error al procesar la solicitud:', error);
                         alert('Error al procesar la solicitud');
-                    });
+                    });   
+                }
             });
         
             document.addEventListener("keydown", function(event) {
