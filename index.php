@@ -187,6 +187,7 @@ $conn->close();
             <button id="next" class="boton-estilo">Siguiente</button>
             <button id="ranking" class="boton-estilo">Ranking</button>
             <button id="reproducir" class="boton-estilo">Reproducir</button>
+            <button id="delete" class="boton-estilo"></button>
         </div>
     </section>
     <script>
