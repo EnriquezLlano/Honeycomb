@@ -159,7 +159,11 @@ $conn->close();
             
             <div class="timer_container penalty-container">
                 <div class="timer_element timer_title penalty-title">Penalty</div>
-                <div class="timer_element timer_value penalty-value"><?php echo $penalizaciones; ?></div>
+                <div class="timer_element timer_value penalty-value"><?php 
+                if ($nivel == 3){
+                    echo $penalizaciones . ' - ' . $penalizaciones_oraciones;
+                }else{
+                    echo $penalizaciones; }?></div>
             </div>
 
             <div class="timer_container time-container">
@@ -356,7 +360,7 @@ $conn->close();
         
             document.getElementById("penaltyP").addEventListener("click", function() {
                 if (!this.disabled) {
-                    if (level == 3 && startedTime) {
+                    if (level == 3 && !startedTime) {
                         secondPenaltyValue += 1;
                         const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
                         document.querySelector(".penalty-value").innerText = secondPenaltyValue;
@@ -392,46 +396,79 @@ $conn->close();
         
             document.getElementById("guardar").addEventListener("click", function() {
                 if (!running) {
-                    const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
-                    const finalSecondTime = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
-                    const formattedTime = formatTime(finalTime);
-                    const formattedTimeSentence = formatSecondTime(finalSecondTime);
-                    console.log('finalTime: ' + finalTime);
-                    console.log('finalSecondTime: ' + finalSecondTime);
-                    console.log('formattedTime: ' + formattedTime);
-                    console.log('formattedSecondTime: ' + formatSecondTime);
-                    
-                    fetch('guardar.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            performance_id: <?php echo json_encode($performance_id); ?>,
-                            tiempo: formattedTime,
-                            tiempo_oracion: formattedTimeSentence,
-                            penalizaciones: penaltyValue,
-                            penalizaciones_oracion: secondPenaltyValue
+                    if (level == 3 && !startedTime && elapsedTime > 0) {
+                        const finalSecondTime = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                        const formattedTimeSentence = formatSecondTime(finalSecondTime);
+                        console.log('finalSecondTime: ' + finalSecondTime);
+                        console.log('formattedSecondTime: ' + formatSecondTime);
+                        
+                        fetch('guardar2.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                performance_id: <?php echo json_encode($performance_id); ?>,
+                                tiempo_oracion: formattedTimeSentence,
+                                penalizacion_oracion: secondPenaltyValue
+                            })
                         })
-                    })
-                    .then(response => response.text())
-                    .then(text => {
-                        console.log('Respuesta del servidor:', text);
-                        return JSON.parse(text);
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            console.log(data);
-                            saved = true;
-                            alert('Datos guardados exitosamente');
-                        } else {
-                            console.log(data);
-                            alert('Error al guardar los datos: ' + data.error);
-                        }
-                    }).catch(error => {
-                        console.error('Error al procesar la solicitud:', error);
-                        alert('Error al procesar la solicitud');
-                    });   
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Respuesta del servidor:', text);
+                            return JSON.parse(text);
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log(data);
+                                saved = true;
+                                alert('Datos guardados exitosamente');
+                            } else {
+                                console.log(data);
+                                alert('Error al guardar los datos: ' + data.error);
+                                console.log(formattedTimeSentence);
+                                console.log(secondPenaltyValue);
+                            }
+                        }).catch(error => {
+                            console.error('Error al procesar la solicitud:', error);
+                            alert('Error al procesar la solicitud');
+                        });
+                    } else {
+                        const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
+                        const formattedTime = formatTime(finalTime);
+                        console.log('finalTime: ' + finalTime)
+                        console.log('formattedTime: ' + formattedTime);
+                        
+                        fetch('guardar.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                performance_id: <?php echo json_encode($performance_id); ?>,
+                                tiempo: formattedTime,
+                                penalizaciones: penaltyValue,
+                            })
+                        })
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Respuesta del servidor:', text);
+                            return JSON.parse(text);
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log(data);
+                                saved = true;
+                                alert('Datos guardados exitosamente');
+                            } else {
+                                console.log(data);
+                                alert('Error al guardar los datos: ' + data.error);
+                            }
+                        }).catch(error => {
+                            console.error('Error al procesar la solicitud:', error);
+                            alert('Error al procesar la solicitud');
+                        });   
+                    }
                 }
             });
         
