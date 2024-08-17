@@ -7,7 +7,7 @@ session_start();
 $currentIndex = isset($_SESSION['current_index']) ? $_SESSION['current_index'] : 0;
 
 
-$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.id AS instancia, a.nivel_id AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones, pe.penalizacion_oracion AS penalizaciones_oraciones,pe.tiempo_oracion AS tiempo_oracion
+$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.id AS instancia, a.nivel_id AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones, pe.penalizacion_oracion AS penalizaciones_oraciones,pe.tiempo_oracion AS tiempo_oracion,pe.descalificados AS descalificados
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
@@ -33,6 +33,7 @@ if ($result && $result->num_rows > 0) {
     $tiempo_oracion = $row['tiempo_oracion'];
     $penalizaciones = $row['penalizaciones'];
     $penalizaciones_oraciones = $row['penalizaciones_oraciones'];
+    $descalificados = $row['descalificados'];
     // Determinar si el tiempo_final es mayor a 00:00 para deshabilitar los botones
     $deshabilitarBotones = $tiempo_final > '00:00';
 } else {
@@ -47,8 +48,25 @@ if ($result && $result->num_rows > 0) {
     $tiempo_oracion = "00:00";
     $penalizaciones = 0;
     $penalizaciones_oraciones = 0;
+    $descalificados = 0;
     // Si no hay datos, asumimos que los botones deben estar habilitados
     $deshabilitarBotones = false;
+}
+
+function descalificarParticipante($alumno_id) {
+    global $conn;
+
+    $sql = "UPDATE performance SET descalificados = TRUE WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $alumno_id);
+
+    if ($stmt->execute()) {
+        echo "Participante descalificado exitosamente.";
+    } else {
+        echo "Error al descalificar al participante: " . $conn->error;
+    }
+
+    $stmt->close();
 }
 
 $conn->close();
@@ -66,15 +84,6 @@ $conn->close();
     <title>Panal de Control</title>
 </head>
 <body>
-    <!-- Icono de registro/logueo -->
-    <!-- <script src="./js/menuDesplegable.js"></script> -->
-    <!-- <section class="lateral_section">
-        posible implementacion para el sistema usuarios
-        <div id="dropdown" class="dropdown-menu">
-            <a href="#login">Iniciar sesión</a>
-            <a href="#register">Registrarse</a>
-        </div>
-    </section> -->
     <!-- Header -->
     <header class="header">
         <div class="header-logo"><img src="./" alt=""></div>
@@ -150,12 +159,7 @@ $conn->close();
                 <div class="timer_element timer_value round-value"><?php echo $instance; ?></div>
             </div>
 
-            <div id="cronometro"><?php 
-            if (is_numeric($tiempo_final)) {
-                echo $tiempo_final;
-            }else{
-                echo htmlspecialchars($tiempo_oracion);
-            }?></div>
+            <div id="cronometro"><?php echo $tiempo_final + $tiempo_oracion;?></div>
             
             <div class="timer_container penalty-container">
                 <div class="timer_element timer_title penalty-title">Penalty</div>
@@ -173,11 +177,6 @@ $conn->close();
         </div>
 
         <div id="botones">
-            <!-- <button id="startStop" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Start</button>
-            <button id="reset" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Reset</button>
-            <button id="penaltyM" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>P -</button>
-            <button id="penaltyP" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>P +</button>
-            <button id="guardar" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Guardar</button> -->
             <button id="startStop" class="boton-estilo">Start</button>
             <button id="reset" class="boton-estilo">Reset</button>
             <button id="penaltyM" class="boton-estilo">P -</button>
@@ -187,7 +186,7 @@ $conn->close();
             <button id="next" class="boton-estilo">Siguiente</button>
             <button id="ranking" class="boton-estilo">Ranking</button>
             <button id="reproducir" class="boton-estilo">Reproducir</button>
-            <button id="delete" class="boton-estilo"></button>
+            <button id="delete" class="boton-estilo" onclick="descalificar(<?php echo $row['id']?>)">Descalificar</button>
         </div>
     </section>
     <script>
@@ -206,13 +205,13 @@ $conn->close();
             let reseted = false;
             let saved = false;
             let level = <?php echo isset($nivel) ? json_encode($nivel) : 'null'; ?>;
-            let temporal;
+            let descalificado = <?php echo isset($descalificados) ? json_encode($descalificados) : 0 ?>;
             console.log('Level: ' + level);
                 
             // Función para habilitar/deshabilitar botones
             function togglePenaltyButton(enable) {
                 document.getElementById("penaltyP").disabled = !enable;
-                // document.getElementById("guardar").disabled = !enable;
+                document.getElementById("guardar").disabled = !enable;
             }
             if (running) {
                 document.getElementById("penaltyP").disabled = !enable;
@@ -221,16 +220,31 @@ $conn->close();
                 document.getElementById("next").disabled = !enable;
                 document.getElementById("prev").disabled = !enable;
                 document.getElementById("ranking").disabled = !enable;
-                document.getElementById("penaltyP").disabled = !enable;
+            }
+
+            function descalificar(id) {
+                if (confirm("¿Estás seguro de que deseas descalificar a este participante?")) {
+                    // Solicitud AJAX para ejecutar la función PHP
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "./guardarDescalificados.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            alert(this.responseText); // Mensaje de éxito o error
+                            location.reload(); // Recargar la página para reflejar los cambios
+                        }
+                    }
+                    xhr.send("id=" + id);
+                }
             }
         
-            function iniciarCronometro() {
-                if (!running && reseted) {  // Solo inicia el cronómetro si no está en ejecución
+            function iniciarCronometro() {S
+                if (!running && reseted) { 
                     if (level == 3) {
                         if (startedTime) {
                             // Inicia el segundo cronómetro
                             running = true;
-                            startSecondTime = Date.now() - elapsedSecondTime; // Asegúrate de que esto esté correcto
+                            startSecondTime = Date.now() - elapsedSecondTime;
                             timer2 = setInterval(actualizarSegundoCronometro, 10);
                             document.getElementById('cronometro').style.backgroundColor = 'green';
                         } else {
@@ -392,6 +406,12 @@ $conn->close();
                         document.getElementById("cronometro").innerText = formatTime(cronometro);
                         console.log(cronometro);
                     }
+                }
+            });
+
+            document.getElementById("delete").addEventListener("click", function(){
+                if (!running) {
+                    
                 }
             });
         

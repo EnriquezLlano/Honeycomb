@@ -79,7 +79,7 @@ $conn->close();
 </div>
 
 <div class="container button-container">
-    <button id="backToEvents" class="btn" onclick="window.location.href='index.php';">Volver a Eventos</button>
+    <button id="backToEvents" class="btn" onclick="window.location.href='eventos.php';">Volver a Eventos</button>
 </div>
 
 <!-- <img class="rafiki" src="./styles/images/winners-rafiki.svg" alt="winners"> -->

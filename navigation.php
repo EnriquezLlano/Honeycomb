@@ -9,7 +9,7 @@ if (!isset($_SESSION['current_index'])) {
 }
 
 // Obtener el número total de registros
-$result = $conn->query("SELECT COUNT(*) AS total FROM performance");
+$result = $conn->query("SELECT COUNT(*) AS total FROM performance WHERE descalificados = 0");
 $row = $result->fetch_assoc();
 $totalRecords = $row['total'];
 
@@ -35,6 +35,6 @@ if (isset($_GET['action'])) {
 
 $conn->close();
 
-header('Location: index.php');
+header('Location: eventos.php');
 exit;
 ?>
