@@ -7,7 +7,7 @@ session_start();
 $currentIndex = isset($_SESSION['current_index']) ? $_SESSION['current_index'] : 0;
 
 
-$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.id AS instancia, a.nivel_id AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones, pe.penalizacion_oracion AS penalizaciones_oraciones,pe.tiempo_oracion AS tiempo_oracion,pe.descalificados AS descalificados
+$sql = "SELECT pe.id AS performance_id, ce.nombre AS concurso, i.nombre AS institucion, i.logo_path AS logo, a.nombre AS alumno, p.nombre AS profesor_nombre, ins.id AS instancia, a.nivel_id AS nivel, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones, pe.penalizacion_oracion AS penalizaciones_oraciones,pe.tiempo_oracion AS tiempo_oracion, pe.descalificados AS descalificados
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
@@ -51,22 +51,6 @@ if ($result && $result->num_rows > 0) {
     $descalificados = 0;
     // Si no hay datos, asumimos que los botones deben estar habilitados
     $deshabilitarBotones = false;
-}
-
-function descalificarParticipante($alumno_id) {
-    global $conn;
-
-    $sql = "UPDATE performance SET descalificados = TRUE WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $alumno_id);
-
-    if ($stmt->execute()) {
-        echo "Participante descalificado exitosamente.";
-    } else {
-        echo "Error al descalificar al participante: " . $conn->error;
-    }
-
-    $stmt->close();
 }
 
 $conn->close();
@@ -159,8 +143,12 @@ $conn->close();
                 <div class="timer_element timer_value round-value"><?php echo $instance; ?></div>
             </div>
 
-            <div id="cronometro"><?php echo $tiempo_final + $tiempo_oracion;?></div>
-            
+            <div id="cronometro"><?php 
+            if ($descalificados == 1 || $descalificados == true) {
+                echo '<script>document.getElementById("timer").style.display = "none";</script>';
+            }else{
+                echo $tiempo_final + $tiempo_oracion;
+            };?></div>
             <div class="timer_container penalty-container">
                 <div class="timer_element timer_title penalty-title">Penalty</div>
                 <div class="timer_element timer_value penalty-value"><?php 
@@ -175,7 +163,7 @@ $conn->close();
                 <div class="timer_element timer_value time-value">45"</div>
             </div>
         </div>
-
+        
         <div id="botones">
             <button id="startStop" class="boton-estilo">Start</button>
             <button id="reset" class="boton-estilo">Reset</button>
@@ -186,9 +174,12 @@ $conn->close();
             <button id="next" class="boton-estilo">Siguiente</button>
             <button id="ranking" class="boton-estilo">Ranking</button>
             <button id="reproducir" class="boton-estilo">Reproducir</button>
-            <button id="delete" class="boton-estilo" onclick="descalificar(<?php echo $row['id']?>)">Descalificar</button>
+            <button id="delete" class="boton-estilo">Descalificar</button>
         </div>
     </section>
+    <h4 id="deleted"><?php if ($descalificados == 1 || $descalificados == true) {
+        echo "DISQUALIFIED";
+    } ?></h4>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Variables globales
@@ -206,6 +197,7 @@ $conn->close();
             let saved = false;
             let level = <?php echo isset($nivel) ? json_encode($nivel) : 'null'; ?>;
             let descalificado = <?php echo isset($descalificados) ? json_encode($descalificados) : 0 ?>;
+            let idActual = <?php echo $row['performance_id']?>;
             console.log('Level: ' + level);
                 
             // Función para habilitar/deshabilitar botones
@@ -222,21 +214,25 @@ $conn->close();
                 document.getElementById("ranking").disabled = !enable;
             }
 
-            function descalificar(id) {
+            function descalificar(idActual) {
+                console.log(idActual); // Asegúrate de usar el nombre correcto
                 if (confirm("¿Estás seguro de que deseas descalificar a este participante?")) {
-                    // Solicitud AJAX para ejecutar la función PHP
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "./guardarDescalificados.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    xhr.onreadystatechange = function() {
-                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                            alert(this.responseText); // Mensaje de éxito o error
-                            location.reload(); // Recargar la página para reflejar los cambios
-                        }
-                    }
-                    xhr.send("id=" + id);
+                    fetch('./guardarDescalificados.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `id=${idActual}`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data); // Mensaje de éxito o error
+                        location.reload(); // Recargar la página para reflejar los cambios
+                    })
+                    .catch(error => console.error('Error:', error));
                 }
             }
+            
         
             function iniciarCronometro() {S
                 if (!running && reseted) { 
@@ -344,6 +340,9 @@ $conn->close();
                 return `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
             }
                     
+            document.getElementById("delete").addEventListener("click", function() {
+                descalificar(idActual);
+            });
             document.getElementById("startStop").addEventListener("click", function() {
                 if (level == 3 && startedTime) {
                     if (running) {
