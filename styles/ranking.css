@@ -74,3 +74,6 @@ body {
 td{
     outline: solid 2px #212121;
 }
+.descalificados{
+    background-color: #c00;
+}

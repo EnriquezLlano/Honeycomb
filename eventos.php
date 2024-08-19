@@ -147,7 +147,7 @@ $conn->close();
             if ($descalificados == 1 || $descalificados == true) {
                 echo '<script>document.getElementById("timer").style.display = "none";</script>';
             }else{
-                echo $tiempo_final + $tiempo_oracion;
+                echo $tiempo_final;
             };?></div>
             <div class="timer_container penalty-container">
                 <div class="timer_element timer_title penalty-title">Penalty</div>
@@ -234,7 +234,7 @@ $conn->close();
             }
             
         
-            function iniciarCronometro() {S
+            function iniciarCronometro() {
                 if (!running && reseted) { 
                     if (level == 3) {
                         if (startedTime) {

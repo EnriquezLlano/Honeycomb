@@ -7,7 +7,7 @@ $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "N/A";
 $instanciaActual = isset($_GET['instancia']) ? $_GET['instancia'] : "N/A";
 
 // Consulta SQL para obtener el ranking de la performance del nivel y la instancia
-$sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo AS tiempo_final, pe.penalizacion AS penalizaciones
+$sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo AS tiempo_final, pe.tiempo_oracion AS tiempo_oracion, pe.penalizacion AS penalizaciones, pe.descalificados AS descalificado
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
@@ -52,20 +52,34 @@ $conn->close();
                     <th scope="col">Institución</th>
                     <th scope="col">Alumno</th>
                     <th scope="col">Tiempo</th>
+                    <?php if ($nivel == 3) {
+                        echo '<th>Oracion</th>';
+                    } ?>
                     <th scope="col">Penalización</th>
+                    <?php if ($descalificados == 1 || $descalificados == true) {
+                        echo '<th>Descalificados</th>';
+                    }?>
                 </tr>
             </thead>
+            
             <tbody>
                 <?php
                 if ($result && $result->num_rows > 0) {
                     $puesto = 1;
                     while ($row = $result->fetch_assoc()) {
+                        $descalificados = $row['descalificado'];
                         echo '<tr>';
                         echo '<td>' . $puesto . '</td>';
                         echo '<td>' . $row['institucion'] . '</td>';
                         echo '<td>' . $row['alumno'] . '</td>';
                         echo '<td>' . $row['tiempo_final'] . '</td>';
+                        if ($nivel == 3) {
+                            echo '<td>' . $row['tiempo_oracion'] . '</td>';
+                        };
                         echo '<td>' . $row['penalizaciones'] . '</td>';
+                        if ($descalificados == 1 || $descalificados == true) {
+                            echo '<td class="descalificados">X</td>';
+                        }
                         echo '</tr>';
                         $puesto++;
                     }

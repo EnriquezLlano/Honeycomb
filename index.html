@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honeycomb</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fuente Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/index1_styles.css">
+    <link rel="stylesheet" href="./styles/section-carousel1.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="./styles/index_nav.css">
+</head>
+
+<body>
+    <header class="custom-header">
+        <div class="container-header">
+            <div class="logo-title">
+                <img src="./styles/images/logo.png" alt="Logo de la Empresa" class="header-logo">
+                <h1 class="site-title">Honeycomb</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="eventos.php" class="nav-link">Iniciar Sesión</a>
+                <a href="eventos.php" class="nav-link">Registrarse</a>
+            </nav>
+            <div class="menu-toggle" id="mobileMenu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="eventos.php" class="nav-link">Iniciar Sesión</a>
+            <a href="eventos.php" class="nav-link">Registrarse</a>
+        </div>
+    
+        <script>
+            document.getElementById('mobileMenu').addEventListener('click', function () {
+                document.getElementById('mobileNav').classList.toggle('active');
+            });
+        </script>
+    </header>
+     
+    
+
+
+
+    <!-- Secccion de slider -->
+    <section class="carousel-section">
+        <article class="carousel__sections-cards container">
+            <div class="section__card show">
+                <div class="section__card-content">
+                    <img class="logo-card" src="./styles/images/logo.png"
+                        alt="Logo">
+                    <h1 class="section__card-title">Diagrama Flujo</h1>
+                    <p class="section__card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam
+                        soluta aspernatur, quasi libero officia sunt repellat nobis id hic unde deserunt dolores
+                        perferendis labore quis placeat est exercitationem recusandae ipsum.</p>
+                    <!-- <div class="section__card-buttons">
+                        <a class="button button-primary" href="#">Comprar ahora</a>
+                        <a class="button button-secondary" href="#">Contáctanos</a>
+                    </div> -->
+                </div>
+                <div class="section__card-imgs">
+                    <div class="section__card-img">
+                        <img src="./styles/images/diagramaCronometro.svg" alt="" class="suits">
+                    </div>
+                </div>
+            </div>
+            <div class="section__card">
+                <div class="section__card-content">
+                    <img class="logo-card" src="./styles/images/logo.png"
+                        alt="Logo de la Empresa">
+                    <h1 class="section__card-title">Diseño 3D</h1>
+                    <p class="section__card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quas
+                        unde sequi, nobis quasi, aut debitis eaque impedit aliquid similique obcaecati, expedita quod
+                        nesciunt? Distinctio assumenda odit asperiores exercitationem enim.</p>
+                    <!-- <div class="section__card-buttons">
+                        <a class="button button-primary" href="#">Comprar ahora</a>
+                        <a class="button button-secondary" href="#">Contáctanos</a>
+                    </div> -->
+                </div>
+                <div class="section__card-imgs">
+                    <div class="section__card-img">
+                        <img src="./styles/images/botonera.jpeg" alt="" class="clock">
+                    </div>
+                </div>
+            </div>
+            <div class="section__card">
+                <div class="section__card-content">
+                    <img class="logo-card" src="./styles/images/logo.png"
+                        alt="Logo de la Empresa">
+                    <h1 class="section__card-title">Lorem Ipsum</h1>
+                    <p class="section__card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto nisi
+                        voluptatem molestiae corporis ad nulla laudantium necessitatibus quasi vero minima at cumque
+                        ipsam amet dignissimos laborum inventore, tempora qui doloribus.</p>
+                    <!-- <div class="section__card-buttons">
+                        <a class="button button-primary" href="#">Comprar ahora</a>
+                        <a class="button button-secondary" href="#">Contáctanos</a>
+                    </div> -->
+                </div>
+                <div class="section__card-imgs">
+                    <div class="section__card-img">
+                        <img src="./styles/images/muestra.webp" alt="" class="shoes">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-control">
+                <a class="carousel__control prev" href="#"><i class="fa-solid fa-arrow-left"
+                        style="color: #ffffff;"></i></a>
+                <a class="carousel__control next" href="#"><i class="fa-solid fa-arrow-right"
+                        style="color: #ffffff;"></i></a>
+            </div>
+        </article>
+    </section>
+
+    <script src="./js/app.js"></script>
+    <section class="cards-section">
+        <div class="row my-5">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarjeta 1</h5>
+                        <p class="card-text">Descripción de la tarjeta 1.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarjeta 2</h5>
+                        <p class="card-text">Descripción de la tarjeta 2.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarjeta 3</h5>
+                        <p class="card-text">Descripción de la tarjeta 3.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 4">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarjeta 4</h5>
+                        <p class="card-text">Descripción de la tarjeta 4.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col">
+                    <h4>Contactenos</h4>
+                    <ul>
+                        <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="#">Nuestros Proveedores</a></li>
+                        <li><a href="#">Politicas de Privacidad</a></li>
+                        <li><a href="#">affiliate program</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Atencion al Cliente</h4>
+                    <ul>
+                        <li><a href="#">Contactenos</a></li>
+                        <li><a href="#">Envios</a></li>
+                        <li><a href="#">Devoluciones y reembolsos</a></li>
+                        <li><a href="#">Opciones de Pago</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Otros</h4>
+                    <ul>
+                        <li><a href="#">Sucursales</a></li>
+                        <li><a href="#">bag</a></li>
+                        <li><a href="#">shoes</a></li>
+                        <li><a href="#">dress</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Siguenos</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <img src="../img/Gentlemen-Sastreria/Gentlemen Romero-logos_white2.png" class="logo-footer">
+                </div>
+            </div>
+        </div>
+        <p class="copy-text">© 2024 Escuela Técnica Carmen Molina de Llano</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

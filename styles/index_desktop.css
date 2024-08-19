@@ -236,3 +236,14 @@ body {
 .boton-estilo:focus {
   background-color: rgb(190, 127, 0);
 }
+/* Descalificados */
+#deleted{
+  margin: 50px auto;
+  font-size: 50px;
+  color: #c00;
+  background-color: #212121;
+  width: fit-content;
+  padding: 10px;
+  border: #c00 2px solid;
+  border-radius: 5px;
+}
