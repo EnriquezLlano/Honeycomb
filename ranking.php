@@ -56,9 +56,6 @@ $conn->close();
                         echo '<th>Oracion</th>';
                     } ?>
                     <th scope="col">Penalización</th>
-                    <?php if ($descalificados == 1 || $descalificados == true) {
-                        echo '<th>Descalificados</th>';
-                    }?>
                 </tr>
             </thead>
             

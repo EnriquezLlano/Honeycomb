@@ -1,32 +1,5 @@
 <?php
-function loadEnv($path) {
-    if (!file_exists($path)) {
-        throw new Exception(".env file not found");
-    }
-
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) {
-            continue;
-        }
-
-        list($name, $value) = explode('=', $line, 2);
-        $name = trim($name);
-        $value = trim($value);
-        
-        $value = trim($value, "\"'");
-
-        $_ENV[$name] = $value;
-    }
-}
-
-// Cargar el archivo .env
-loadEnv(__DIR__ . '/.env');
-
-$servername = $_ENV['DB_HOST'];
-$username = $_ENV['DB_USERNAME'];
-$password = $_ENV['DB_PASSWORD'];
-$dbname = $_ENV['DB_NAME'];
+require './conexion.php';
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -101,6 +74,10 @@ $result = $stmt->get_result();
         .table tbody td {
             border: 1px solid black;
         }
+        .bottom-container{
+            width: fit-content;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -147,6 +124,12 @@ $result = $stmt->get_result();
                 <?php endif; ?>
             </tbody>
         </table>
+        <div class="bottom-container">
+            <a href="./inscripcionInstitucion.php" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
+            <a href="./inscripcionProfesor.php" class="btn-bottom btn btn-primary ms-3">Profesores</a>
+            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Evetos Registrados</a>
+            <a href="./eventos.php" class="btn-bottom btn btn-primary ms-3">Ir al cronometro</a>
+        </div>
     </div>
 
     <!-- Bootstrap JS (opcional) -->

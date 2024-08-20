@@ -1,0 +1,123 @@
+.custom-header {
+    background-color: #212121; /* Gris oscuro */
+    padding: 20px;
+    color: white;
+    position: relative;
+}
+
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center; /* Alinea verticalmente el logo y el título */
+}
+
+.header-logo {
+    width: 50px; /* Ajusta el tamaño del logo */
+    height: auto;
+    margin-right: 10px; /* Añade un pequeño espacio entre el logo y el título */
+}
+
+.site-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0; /* Elimina márgenes adicionales */
+    line-height: 1; /* Asegura que la altura de línea no afecte la alineación */
+}
+
+/* Estilo de los enlaces de navegación */
+.nav-menu {
+    display: flex;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 18px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #BDC3C7;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover::before {
+    visibility: visible;
+    width: 100%;
+}
+
+.nav-link:hover {
+    color: #BDC3C7;
+}
+
+/* Estilo del menú móvil */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #2C3E50;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.mobile-nav .nav-link {
+    margin: 10px 0;
+    color: white;
+}
+
+/* Media queries para dispositivos móviles */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .mobile-nav.active {
+        display: flex;
+    }
+
+    .custom-header {
+        padding: 10px 20px;
+    }
+
+    .site-title {
+        font-size: 24px;
+    }
+
+    .nav-link {
+        font-size: 16px;
+    }
+}

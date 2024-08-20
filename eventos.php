@@ -62,9 +62,9 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./styles/images/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="./styles/index_desktop.css">
-    <link rel="stylesheet" href="./styles/index_tablet.css">
-    <link rel="stylesheet" href="./styles/index_smartphone.css">
+    <link rel="stylesheet" href="./styles/eventos_desktop.css">
+    <link rel="stylesheet" href="./styles/eventos_tablet.css">
+    <link rel="stylesheet" href="./styles/eventos_smartphone.css">
     <title>Panal de Control</title>
 </head>
 <body>
@@ -73,7 +73,7 @@ $conn->close();
         <div class="header-logo"><img src="./" alt=""></div>
         <div class="header-title">PANAL DE CONTROL</div>
         <div class="header-sign">
-            <a href="./registro.php">
+            <a href="./index.html">
                 <button class="button_login">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-login-2" width="44" height="44" viewBox="0 0 24 24" stroke-width="1" stroke="#fb0" fill="none" stroke-linecap="round" stroke-linejoin="round"> <!--onclick="toggleDropdown()" == menu desplegable -->
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -179,6 +179,8 @@ $conn->close();
     </section>
     <h4 id="deleted"><?php if ($descalificados == 1 || $descalificados == true) {
         echo "DISQUALIFIED";
+    }else{
+        echo "<script>document.getElementById('deleted').style.display = 'none'</script>";
     } ?></h4>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -216,7 +218,7 @@ $conn->close();
 
             function descalificar(idActual) {
                 console.log(idActual); // Asegúrate de usar el nombre correcto
-                if (confirm("¿Estás seguro de que deseas descalificar a este participante?")) {
+                if (confirm("¿Estás seguro de que deseas descalificar a este participante? Esta accion no puede deshacerse")) {
                     fetch('./guardarDescalificados.php', {
                         method: 'POST',
                         headers: {
@@ -408,12 +410,6 @@ $conn->close();
                 }
             });
 
-            document.getElementById("delete").addEventListener("click", function(){
-                if (!running) {
-                    
-                }
-            });
-        
             document.getElementById("guardar").addEventListener("click", function() {
                 if (!running) {
                     if (level == 3 && !startedTime && elapsedTime > 0) {
@@ -516,6 +512,9 @@ $conn->close();
                     }
                 } else if (event.key === "r" || event.key === "R") {
                     window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
+                }else if(event.key === "f" || event.key  === "F"){
+                    event.preventDefault();
+                    document.getElementById("delete").click();
                 }
             });
         

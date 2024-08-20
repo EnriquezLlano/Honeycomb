@@ -1,0 +1,67 @@
+@media (max-width: 900px) and (min-width:451px) {
+/* MAIN STYLES */
+.index_section{
+    height: 350px;
+}
+
+/* HEADER */
+
+/* TOP SECTION */
+.title_container{
+    display: none;
+}
+.llano_section{
+    height: fit-content;
+}
+.llano-logo{
+    height: 50px;
+    aspect-ratio: 1/1;
+}
+#top_section{
+    height: 100px;
+}
+
+/* DATA */
+#data{
+    width: 90%;
+    row-gap: 60px;
+}
+.etiqueta{
+    font-size: 42px;
+}
+.nombre{
+    font-size: 42px;
+}
+.image{
+    width: 80px;
+    height: 80px;
+}
+
+/* TIMER */
+#cronometro{
+    font-size: 92px;
+    font-weight: 200;
+}
+.main_container{
+    margin-top: 0;
+}
+.timer_container{
+    font-size: 42px;
+    min-width: fit-content;
+    width:  auto;
+}
+.timer_title{
+    padding: 0 3px 0 3px;
+}
+#botones{
+    margin-top: 20px;
+}
+.boton-estilo{
+    font-size: 42px;
+    width: 40%;
+    height: 80px;
+    max-width: 380px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+}

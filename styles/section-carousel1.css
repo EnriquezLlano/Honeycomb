@@ -1,0 +1,186 @@
+@import url(styles.css);
+
+.carousel-section {
+  display: flex;
+  justify-content: center;
+  margin: 30px 50px 0 50px;
+  padding: 10px;
+  background: linear-gradient(60deg, #ffcd38, #ffa500);
+  border-radius: 25px;
+}
+
+.carousel__sections-cards {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.section__card {
+  display: none;
+}
+
+.section__card.show {
+  display: flex;
+  justify-content: space-around;
+  padding: 20 px 0;
+  max-height: 500px;
+}
+
+.section__card {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section__card-content {
+  flex-basis: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section__card-title {
+  font-size: 4.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 2rem;
+  color: #ffff;
+}
+
+.section__card-text {
+  margin-bottom: 3rem;
+  font-weight: 600;
+  color: #ffff;
+}
+
+.section__card-buttons a {
+  margin-right: 1rem;
+}
+
+.section__card-imgs {
+  flex-basis: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section__card-img {
+  padding: 50px 0 50px 100px;
+}
+
+.section__card-img img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.carousel-control {
+  position: absolute;
+  right: 1px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.prev,
+.next {
+  color: #fff;
+  background-color: #000;
+  font-size: 1rem;
+  margin: 0.5rem 0.5rem 0.5rem 0rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 5px;
+}
+
+.prev:hover,
+.next:hover {
+  background-color: #151C69;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+@media only screen and (max-width: 1150px) {
+  .section__card-title {
+    font-size: 3.5rem;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .section__card-img {
+    padding: 50px 0;
+  }
+
+  .section__card-title {
+    font-size: 3rem;
+  }
+
+  .section__card.show {
+    flex-direction: column;
+    max-height: 100%;
+    padding-bottom: 0;
+  }
+
+  .section__card-content {
+    margin-bottom: 2rem;
+  }
+
+  .carousel__sections {
+    justify-content: center;
+  }
+
+  .carousel__sections-cards {
+    justify-content: flex-end;
+  }
+
+  .carousel-control {
+    flex-direction: row;
+    align-items: center;
+    position: static;
+  }
+}
+
+@media only screen and (max-width: 510px) {
+
+  .section__card-text,
+  .section__card-title {
+    text-align: center;
+  }
+
+  .section__card-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section__card-buttons a {
+    margin: 0;
+    text-align: center;
+  }
+
+  .section__card-buttons a:nth-child(1) {
+    margin-bottom: 10px;
+  }
+}
+
+.suits {
+  border-radius: 1em;
+  background-color: #FFECB3;
+}
+
+.clock {
+  border-radius: 50px;
+}
+
+.shoes {
+  border-radius: 50px;
+}
+
+.logo-card {
+  width: 15%;
+  margin-bottom: 0;
+  margin-top: 0;
+}

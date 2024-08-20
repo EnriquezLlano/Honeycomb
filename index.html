@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Fuente Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/index1_styles.css">
+    <link rel="stylesheet" href="./styles/index_styles.css">
     <link rel="stylesheet" href="./styles/section-carousel1.css">
     <link rel="stylesheet" href="./styles/styles.css">
     <link rel="stylesheet" href="./styles/index_nav.css">
@@ -23,8 +23,8 @@
                 <h1 class="site-title">Honeycomb</h1>
             </div>
             <nav class="nav-menu">
-                <a href="eventos.php" class="nav-link">Iniciar Sesión</a>
-                <a href="eventos.php" class="nav-link">Registrarse</a>
+                <a href="inscripcionAlumno.php" class="nav-link">Iniciar Sesión</a>
+                <a href="registroAlumno.php" class="nav-link">Registrarse</a>
             </nav>
             <div class="menu-toggle" id="mobileMenu">
                 <span class="bar"></span>
@@ -33,8 +33,8 @@
             </div>
         </div>
         <div class="mobile-nav" id="mobileNav">
-            <a href="eventos.php" class="nav-link">Iniciar Sesión</a>
-            <a href="eventos.php" class="nav-link">Registrarse</a>
+            <a href="inscripcionAlumno.php" class="nav-link">Iniciar Sesión</a>
+            <a href="registroAlumno.php" class="nav-link">Registrarse</a>
         </div>
     
         <script>
@@ -56,9 +56,7 @@
                     <img class="logo-card" src="./styles/images/logo.png"
                         alt="Logo">
                     <h1 class="section__card-title">Diagrama Flujo</h1>
-                    <p class="section__card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam
-                        soluta aspernatur, quasi libero officia sunt repellat nobis id hic unde deserunt dolores
-                        perferendis labore quis placeat est exercitationem recusandae ipsum.</p>
+                    <p class="section__card-text">Diagrama de flujo demuestrativo acerca del funcionamiento y la logica detras del cronometro y sus botones relacionados. El sistema detecta cuando un participante es de nivel 3 y cambia su comportamiento para adecuarse al el</p>
                     <!-- <div class="section__card-buttons">
                         <a class="button button-primary" href="#">Comprar ahora</a>
                         <a class="button button-secondary" href="#">Contáctanos</a>
@@ -75,9 +73,8 @@
                     <img class="logo-card" src="./styles/images/logo.png"
                         alt="Logo de la Empresa">
                     <h1 class="section__card-title">Diseño 3D</h1>
-                    <p class="section__card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quas
-                        unde sequi, nobis quasi, aut debitis eaque impedit aliquid similique obcaecati, expedita quod
-                        nesciunt? Distinctio assumenda odit asperiores exercitationem enim.</p>
+                    <p class="section__card-text">Un panel de control o botoner diseñada con Thinkercard y creada con impresion 3D presenta un diseño ergonomico para su uso en el concurso</p>
+                    
                     <!-- <div class="section__card-buttons">
                         <a class="button button-primary" href="#">Comprar ahora</a>
                         <a class="button button-secondary" href="#">Contáctanos</a>
@@ -93,10 +90,8 @@
                 <div class="section__card-content">
                     <img class="logo-card" src="./styles/images/logo.png"
                         alt="Logo de la Empresa">
-                    <h1 class="section__card-title">Lorem Ipsum</h1>
-                    <p class="section__card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto nisi
-                        voluptatem molestiae corporis ad nulla laudantium necessitatibus quasi vero minima at cumque
-                        ipsam amet dignissimos laborum inventore, tempora qui doloribus.</p>
+                    <h1 class="section__card-title">Base de Datos Relacional</h1>
+                    <p class="section__card-text">El sistema cuenta con una base de datos desarrollada con MySQL, es decir que es una base de datos relacional, ideal para el funcionamiento adecuado de nuestro sistema.</p>
                     <!-- <div class="section__card-buttons">
                         <a class="button button-primary" href="#">Comprar ahora</a>
                         <a class="button button-secondary" href="#">Contáctanos</a>
@@ -104,15 +99,25 @@
                 </div>
                 <div class="section__card-imgs">
                     <div class="section__card-img">
-                        <img src="./styles/images/muestra.webp" alt="" class="shoes">
+                        <img src="./styles/images/bbdd.png" alt="" class="shoes">
                     </div>
                 </div>
             </div>
             <div class="carousel-control">
                 <a class="carousel__control prev" href="#"><i class="fa-solid fa-arrow-left"
-                        style="color: #ffffff;"></i></a>
+                        style="color: #ffffff;"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="15" height="15" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff9300" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M5 12l14 0" />
+                            <path d="M5 12l6 6" />
+                            <path d="M5 12l6 -6" />
+                          </svg></i></a>
                 <a class="carousel__control next" href="#"><i class="fa-solid fa-arrow-right"
-                        style="color: #ffffff;"></i></a>
+                        style="color: #ffffff;"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-right" width="15" height="15" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff9300" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M5 12l14 0" />
+                            <path d="M13 18l6 -6" />
+                            <path d="M13 6l6 6" />
+                          </svg></i></a>
             </div>
         </article>
     </section>
@@ -122,37 +127,37 @@
         <div class="row my-5">
             <div class="col-md-3">
                 <div class="card">
-                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 1">
+                    <img src="./styles/images/vista1.png" class="card-img-top" alt="Card 1">
                     <div class="card-body">
-                        <h5 class="card-title">Tarjeta 1</h5>
-                        <p class="card-text">Descripción de la tarjeta 1.</p>
+                        <h5 class="card-title">Vista de Alumnos Inscriptos</h5>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card">
-                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 2">
+                    <img src="./styles/images/vista2.png" class="card-img-top" alt="Card 2">
                     <div class="card-body">
-                        <h5 class="card-title">Tarjeta 2</h5>
-                        <p class="card-text">Descripción de la tarjeta 2.</p>
+                        <h5 class="card-title">Vista de registro de alumnos</h5>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card">
-                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 3">
+                    <img src="./styles/images/vista3.png" class="card-img-top" alt="Card 3">
                     <div class="card-body">
-                        <h5 class="card-title">Tarjeta 3</h5>
-                        <p class="card-text">Descripción de la tarjeta 3.</p>
+                        <h5 class="card-title">Vista principal del Cronometro</h5>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card">
-                    <img src="./styles/images/muestra.webp" class="card-img-top" alt="Card 4">
+                    <img src="./styles/images/vista4.png" class="card-img-top" alt="Card 4">
                     <div class="card-body">
-                        <h5 class="card-title">Tarjeta 4</h5>
-                        <p class="card-text">Descripción de la tarjeta 4.</p>
+                        <h5 class="card-title">Vista del ranking</h5>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
@@ -166,39 +171,42 @@
                 <div class="footer-col">
                     <h4>Contactenos</h4>
                     <ul>
-                        <li><a href="#">Sobre Nosotros</a></li>
-                        <li><a href="#">Nuestros Proveedores</a></li>
-                        <li><a href="#">Politicas de Privacidad</a></li>
-                        <li><a href="#">affiliate program</a></li>
+                        <li><a href="#">semmanuelenriquez@gmail.com</a></li>
+                        <li><a href="#">@gmail.com</a></li>
+                        <li><a href="#">@gmail.com</a></li>
+                        <li><a href="#">@gmail.com</a></li>
+                        <li><a href="#">@gmail.com</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Atencion al Cliente</h4>
+                    <h4>Institucion</h4>
                     <ul>
-                        <li><a href="#">Contactenos</a></li>
-                        <li><a href="#">Envios</a></li>
-                        <li><a href="#">Devoluciones y reembolsos</a></li>
-                        <li><a href="#">Opciones de Pago</a></li>
+                        <li><a href="#">Escuela Tecnica 'Carmen M. de Llano'</a></li>
+                        <li><a href="https://www.facebook.com/institutosuperiorllano/?locale=es_LA"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-facebook-filled" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M18 2a1 1 0 0 1 .993 .883l.007 .117v4a1 1 0 0 1 -.883 .993l-.117 .007h-3v1h3a1 1 0 0 1 .991 1.131l-.02 .112l-1 4a1 1 0 0 1 -.858 .75l-.113 .007h-2v6a1 1 0 0 1 -.883 .993l-.117 .007h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-6h-2a1 1 0 0 1 -.993 -.883l-.007 -.117v-4a1 1 0 0 1 .883 -.993l.117 -.007h2v-1a6 6 0 0 1 5.775 -5.996l.225 -.004h3z" stroke-width="0" fill="currentColor" />
+                          </svg></a></li>
+                        <!-- <li><a href="#">Devoluciones y reembolsos</a></li>
+                        <li><a href="#">Opciones de Pago</a></li> -->
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Otros</h4>
+                    <h4>Equipo</h4>
                     <ul>
-                        <li><a href="#">Sucursales</a></li>
-                        <li><a href="#">bag</a></li>
-                        <li><a href="#">shoes</a></li>
-                        <li><a href="#">dress</a></li>
+                        <li><a href="./sobreNosotros.html">Sobre Nosotros</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Siguenos</h4>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="https://github.com/EnriquezLlano/Honeycomb" target="_blank" rel="noopener noreferrer"><i><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github-filled" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M5.315 2.1c.791 -.113 1.9 .145 3.333 .966l.272 .161l.16 .1l.397 -.083a13.3 13.3 0 0 1 4.59 -.08l.456 .08l.396 .083l.161 -.1c1.385 -.84 2.487 -1.17 3.322 -1.148l.164 .008l.147 .017l.076 .014l.05 .011l.144 .047a1 1 0 0 1 .53 .514a5.2 5.2 0 0 1 .397 2.91l-.047 .267l-.046 .196l.123 .163c.574 .795 .93 1.728 1.03 2.707l.023 .295l.007 .272c0 3.855 -1.659 5.883 -4.644 6.68l-.245 .061l-.132 .029l.014 .161l.008 .157l.004 .365l-.002 .213l-.003 3.834a1 1 0 0 1 -.883 .993l-.117 .007h-6a1 1 0 0 1 -.993 -.883l-.007 -.117v-.734c-1.818 .26 -3.03 -.424 -4.11 -1.878l-.535 -.766c-.28 -.396 -.455 -.579 -.589 -.644l-.048 -.019a1 1 0 0 1 .564 -1.918c.642 .188 1.074 .568 1.57 1.239l.538 .769c.76 1.079 1.36 1.459 2.609 1.191l.001 -.678l-.018 -.168a5.03 5.03 0 0 1 -.021 -.824l.017 -.185l.019 -.12l-.108 -.024c-2.976 -.71 -4.703 -2.573 -4.875 -6.139l-.01 -.31l-.004 -.292a5.6 5.6 0 0 1 .908 -3.051l.152 -.222l.122 -.163l-.045 -.196a5.2 5.2 0 0 1 .145 -2.642l.1 -.282l.106 -.253a1 1 0 0 1 .529 -.514l.144 -.047l.154 -.03z" stroke-width="0" fill="currentColor" />
+                          </svg></i></a>
+                        <!-- <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a> -->
                     </div>
-                    <img src="../img/Gentlemen-Sastreria/Gentlemen Romero-logos_white2.png" class="logo-footer">
                 </div>
             </div>
         </div>
