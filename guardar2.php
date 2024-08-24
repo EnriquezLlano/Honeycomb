@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Cambiar el tipo de parámetro para coincidir con los datos
-        $stmt->bind_param('sii', $tiempo_oracion, $penalizacion_oracion, $performance_id);
+        $stmt->bind_param('dii', $tiempo_oracion, $penalizacion_oracion, $performance_id);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {
