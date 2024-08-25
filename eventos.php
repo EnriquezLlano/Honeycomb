@@ -56,7 +56,7 @@ $sql = "SELECT
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
         ORDER BY a.nivel_id ASC
-        LIMIT 20 OFFSET $currentIndex";
+        LIMIT 100 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
 
@@ -115,7 +115,7 @@ $conn->close();
     <link rel="icon" href="./styles/images/icon.png">
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/estilos.css"> <!-- Estilos CSS -->
+    <link rel="stylesheet" href="styles/eventos.css"> <!-- Estilos CSS -->
 </head>
 
 <body>
@@ -187,7 +187,13 @@ $conn->close();
         <div class="round-title">Round</div>
         <div class="round-value"><?php echo $instance; ?></div>
     </div>
-    <div id="cronometro"><?php echo $tiempo_final; ?></div>
+    <div id="cronometro"><?php 
+    if ($nivel == 3){
+        // echo $tiempo_final;
+        echo $tiempo_deletreo;
+    }else{
+        echo $tiempo_deletreo;  
+    };?></div>
     <div class="penalty-container">
         <div class="penalty-title">Penalty</div>
         <div class="penalty-value"><?php echo $penalizaciones; ?></div>
@@ -264,7 +270,7 @@ $conn->close();
             }
         }
         function iniciarCronometro() {
-            if (!running && reseted) {
+            if (!running) {
                 if (level == 3) {
                     if (startedTime) {
                         // Inicia el segundo cronómetro
@@ -318,7 +324,7 @@ $conn->close();
                     penaltyValue = 0;
                 }
                 document.querySelector(".penalty-value").innerText = penaltyValue;
-                document.getElementById("cronometro").innerText = "00.00";
+                document.getElementById("cronometro").innerText = "00:00";
                 reseted = true;
                 togglePenaltyButton(false);
             }
@@ -327,10 +333,12 @@ $conn->close();
             if (running) {
                 elapsedTime = Date.now() - startTime;
             }
-            const totalSeconds = elapsedTime / 1000;
+            const penalizaciones = 5 * penaltyValue
+            const totalSeconds = (elapsedTime / 1000) + penalizaciones;
             const displaySegundos = Math.floor(totalSeconds).toString().padStart(2, '0');
             const displayMilisegundos = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 100).toString().padStart(2, '0');
-            document.getElementById("cronometro").innerText = `${displaySegundos}.${displayMilisegundos}`;
+            const cronometro = `${displaySegundos}.${displayMilisegundos}`;
+            document.getElementById("cronometro").innerText = cronometro.replace(".", ":");
         }
         function actualizarSegundoCronometro() {
             if (running) {
@@ -477,8 +485,8 @@ $conn->close();
                             },
                             body: JSON.stringify({
                                 performance_id: <?php echo json_encode($performance_id); ?>,
-                                tiempo: formattedTime,
-                                penalizaciones: penaltyValue,
+                                tiempo_deletreo: formattedTime,
+                                penalizacion_deletreo: penaltyValue,
                             })
                         })
                         .then(response => response.text())
