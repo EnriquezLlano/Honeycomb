@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-08-2024 a las 21:15:26
+-- Tiempo de generación: 25-08-2024 a las 19:39:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,21 +41,42 @@ CREATE TABLE `alumnos` (
 --
 
 INSERT INTO `alumnos` (`id`, `nombre`, `email`, `institucion_id`, `profesor_id`, `nivel_id`) VALUES
-(1, 'Carlos Gonzales', 'carlos@gmail.com', 1, 1, 1),
-(2, 'Ana Fernandez', 'ana@hotmail.com', 2, 2, 1),
-(3, 'Pedro Gomez', 'pedro@yahoo.com', 3, 3, 1),
-(4, 'Laura Diaz', 'laura@gmail.com', 4, 4, 1),
-(5, 'Marta Perez', 'marta@hotmail.com', 5, 5, 1),
-(6, 'Javier Rodriguez', 'javier@gmail.com', 6, 6, 2),
-(7, 'María Gutierrez', 'maria@yahoo.com', 7, 7, 2),
-(8, 'Lucía Martin', 'lucia@hotmail.com', 8, 8, 2),
-(9, 'Carlos Lopez', 'carlos@gmail.com', 9, 9, 2),
-(10, 'Laura Sanchez', 'laura@yahoo.com', 10, 10, 2),
-(11, 'Pedro Martinez', 'pedro@hotmail.com', 11, 11, 3),
-(12, 'Ana Garcia', 'ana@gmail.com', 12, 12, 3),
-(13, 'Juan Jiménez', 'juan@hotmail.com', 13, 13, 3),
-(14, 'María López', 'maria@yahoo.com', 14, 14, 3),
-(15, 'Pablo Sánchez', 'pablo@gmail.com', 15, 15, 3);
+(45, 'Acosta Judith', NULL, 1, 1, 1),
+(46, 'Rivero Lucas', NULL, 1, 1, 1),
+(47, 'Alarcon Tomas', NULL, 1, 1, 1),
+(48, 'Gonzales Santino', NULL, 1, 1, 1),
+(49, 'Ramirez Ian', NULL, 1, 1, 1),
+(50, 'Lazos Kiara', NULL, 1, 1, 1),
+(51, 'Pared Garrido Octavio', NULL, 1, 1, 1),
+(52, 'Britez Victoria', NULL, 1, 1, 1),
+(53, 'Maidana Mauro', NULL, 1, 1, 1),
+(54, 'Danieli Exequiel', NULL, 1, 21, 1),
+(55, 'Maidana Hana Juliette', NULL, 1, 21, 1),
+(56, 'Perez Alegra Bautista', NULL, 1, 20, 1),
+(57, 'Vallejos Cesia Ester', NULL, 1, 20, 1),
+(58, 'Monzon Jeremy', NULL, 1, 22, 2),
+(59, 'Romero Uriel', NULL, 1, 22, 2),
+(60, 'Suarez Dante', NULL, 1, 22, 2),
+(61, 'Romero Antonella', NULL, 1, 19, 2),
+(62, 'Vallejos Octavio', NULL, 1, 19, 2),
+(63, 'Ledesma Franco', NULL, 1, 19, 2),
+(64, 'Torres Ma. Victoria', NULL, 1, 19, 2),
+(65, 'Leiva Ignacio', NULL, 1, 19, 3),
+(66, 'Alegre Fiorella', NULL, 1, 19, 3),
+(67, 'Fernandez Cristian', NULL, 1, 19, 3),
+(68, 'Gomez Angel', NULL, 1, 19, 3),
+(69, 'Domato Antonella', NULL, 1, 19, 3),
+(70, 'Legal Brest Pia', NULL, 1, 20, 3),
+(71, 'Romero Uriel', NULL, 1, 20, 3),
+(72, 'Enriquez Santiago', NULL, 1, 20, 3);
+
+--
+-- Disparadores `alumnos`
+--
+DELIMITER $$
+CREATE TRIGGER `performance_rows` AFTER INSERT ON `alumnos` FOR EACH ROW INSERT INTO performance (alumno_id, instancia_id, nivel_id) VALUES (NEW.id, 1, NEW.nivel_id)
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -431,33 +452,53 @@ INSERT INTO `palabras` (`ID`, `palabra`, `nivel_palabra`, `instancia_palabra`, `
 
 CREATE TABLE `performance` (
   `id` int(11) NOT NULL,
-  `alumno_id` int(11) DEFAULT NULL,
-  `instancia_id` int(11) DEFAULT NULL,
-  `tiempo` varchar(20) DEFAULT NULL,
-  `penalizacion` int(11) DEFAULT NULL,
-  `nivel_id` int(11) DEFAULT NULL
+  `alumno_id` int(11) NOT NULL,
+  `instancia_id` int(11) NOT NULL DEFAULT 1,
+  `tiempo_deletreo` varchar(10) NOT NULL DEFAULT '00:00',
+  `tiempo_oracion` varchar(10) NOT NULL DEFAULT '00:00',
+  `tiempo_final` varchar(10) NOT NULL DEFAULT '00:00',
+  `penalizacion_deletreo` int(11) NOT NULL DEFAULT 0,
+  `penalizacion_oracion` int(11) NOT NULL DEFAULT 0,
+  `penalizaciones_totales` int(11) NOT NULL DEFAULT 0,
+  `nivel_id` int(11) NOT NULL,
+  `audio_deletreo` int(80) DEFAULT NULL,
+  `audio_oracion` int(80) DEFAULT NULL,
+  `descalificados` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `performance`
 --
 
-INSERT INTO `performance` (`id`, `alumno_id`, `instancia_id`, `tiempo`, 'tiempo_oracion', `penalizacion`, `nivel_id`) VALUES
-(1, 1, 1, 01.72, 00.00 0, 1),
-(2, 2, 1, 00.23, 00.00 0, 1),
-(3, 3, 1, 02.19, 00.00 0, 1),
-(4, 4, 1, 01.27, 00.00 2, 1),
-(5, 5, 1, 01.85, 00.00 0, 1),
-(6, 6, 1, 00.12, 00.00 0, 2),
-(7, 7, 1, 00.46, 00.00 1, 2),
-(8, 8, 1, 00.00, 00.00 0, 2),
-(9, 9, 1, 01.33, 00.00 0, 2),
-(10, 10, 1, 02.51, 00.00 0, 2),
-(11, 11, 1, 09.50, 00.00 1, 3),
-(12, 12, 1, 02.55, 00.00 0, 3),
-(13, 13, 3, 01.45, 00.00 0, 3),
-(14, 14, 3, 00:00, 00.00 0, 3),
-(15, 15, 1, 00:00, 00.00 0, 3);
+INSERT INTO `performance` (`id`, `alumno_id`, `instancia_id`, `tiempo_deletreo`, `tiempo_oracion`, `tiempo_final`, `penalizacion_deletreo`, `penalizacion_oracion`, `penalizaciones_totales`, `nivel_id`, `audio_deletreo`, `audio_oracion`, `descalificados`) VALUES
+(116, 45, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(117, 46, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(118, 47, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(119, 48, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(120, 49, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(121, 50, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(122, 51, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(123, 52, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(124, 53, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(125, 54, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(126, 55, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(127, 56, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(128, 57, 1, '00:00', '00:00', '00:00', 0, 0, 0, 1, NULL, NULL, 0),
+(129, 58, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(130, 59, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(131, 60, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(132, 61, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(133, 62, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(134, 63, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(135, 64, 1, '00:00', '00:00', '00:00', 0, 0, 0, 2, NULL, NULL, 0),
+(136, 65, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(137, 66, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(138, 67, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(139, 68, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(140, 69, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(141, 70, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(142, 71, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0),
+(143, 72, 1, '00:00', '00:00', '00:00', 0, 0, 0, 3, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -475,21 +516,14 @@ CREATE TABLE `profesores` (
 --
 
 INSERT INTO `profesores` (`id`, `nombre`) VALUES
-(1, 'Juan Martinez'),
-(2, 'María Gomez'),
-(3, 'Pedro Rodríguez'),
-(4, 'Laura López'),
-(5, 'Carlos Hernández'),
-(6, 'Ana Pérez'),
-(7, 'Diego García'),
-(8, 'Sofía Díaz'),
-(9, 'Luis Martín'),
-(10, 'Elena Ruiz'),
-(11, 'Pablo Jiménez'),
-(12, 'Andrea Álvarez'),
-(13, 'Javier Moreno'),
-(14, 'Lucía Romero'),
-(15, 'Daniel Alonso');
+(1, '-'),
+(16, 'Yanina Meneses'),
+(17, 'Marcelo Valenzuela'),
+(18, 'Mariela Kohon'),
+(19, 'Ramiro'),
+(20, 'Milagros Benitez'),
+(21, 'Laura Tur'),
+(22, 'Milagros Vazquez');
 
 -- --------------------------------------------------------
 
@@ -562,8 +596,7 @@ ALTER TABLE `palabras`
 ALTER TABLE `performance`
   ADD PRIMARY KEY (`id`),
   ADD KEY `alumno_id` (`alumno_id`),
-  ADD KEY `instancia_id` (`instancia_id`),
-  ADD KEY `fk_nivel_id` (`nivel_id`);
+  ADD KEY `nivel_id` (`nivel_id`);
 
 --
 -- Indices de la tabla `profesores`
@@ -586,7 +619,7 @@ ALTER TABLE `seleccionados`
 -- AUTO_INCREMENT de la tabla `alumnos`
 --
 ALTER TABLE `alumnos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT de la tabla `certamenes`
@@ -622,13 +655,13 @@ ALTER TABLE `palabras`
 -- AUTO_INCREMENT de la tabla `performance`
 --
 ALTER TABLE `performance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
 
 --
 -- AUTO_INCREMENT de la tabla `profesores`
 --
 ALTER TABLE `profesores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `seleccionados`
@@ -645,8 +678,7 @@ ALTER TABLE `seleccionados`
 --
 ALTER TABLE `alumnos`
   ADD CONSTRAINT `alumnos_ibfk_1` FOREIGN KEY (`institucion_id`) REFERENCES `instituciones` (`id`),
-  ADD CONSTRAINT `alumnos_ibfk_2` FOREIGN KEY (`profesor_id`) REFERENCES `profesores` (`id`),
-  ADD CONSTRAINT `nivel_id` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`id`);
+  ADD CONSTRAINT `alumnos_ibfk_2` FOREIGN KEY (`profesor_id`) REFERENCES `profesores` (`id`);
 
 --
 -- Filtros para la tabla `instancias`
@@ -658,15 +690,8 @@ ALTER TABLE `instancias`
 -- Filtros para la tabla `performance`
 --
 ALTER TABLE `performance`
-  ADD CONSTRAINT `fk_nivel_id` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`id`),
-  ADD CONSTRAINT `performance_ibfk_1` FOREIGN KEY (`alumno_id`) REFERENCES `alumnos` (`id`),
-  ADD CONSTRAINT `performance_ibfk_2` FOREIGN KEY (`instancia_id`) REFERENCES `instancias` (`id`);
-
---
--- Filtros para la tabla `seleccionados`
---
-ALTER TABLE `seleccionados`
-  ADD CONSTRAINT `seleccionados_ibfk_1` FOREIGN KEY (`performance_id`) REFERENCES `performance` (`id`);
+  ADD CONSTRAINT `alumno_id` FOREIGN KEY (`alumno_id`) REFERENCES `alumnos` (`id`),
+  ADD CONSTRAINT `nivel_id` FOREIGN KEY (`nivel_id`) REFERENCES `alumnos` (`nivel_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

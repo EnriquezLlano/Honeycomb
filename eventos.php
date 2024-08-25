@@ -42,10 +42,13 @@ $sql = "SELECT
             p.nombre AS profesor_nombre, 
             ins.id AS instancia, 
             a.nivel_id AS nivel, 
-            pe.tiempo AS tiempo_final, 
-            pe.penalizacion AS penalizaciones,
-            pe.tiempo_oracion, 
-            pe.penalizacion_oracion
+            pe.tiempo_deletreo AS tiempo_deletreo, 
+            pe.tiempo_oracion AS tiempo_oracion, 
+            pe.tiempo_final AS tiempo_final,
+            pe.penalizacion_deletreo AS penalizacion_deletreo,
+            pe.penalizacion_oracion AS penalizacion_oracion,
+            pe.penalizaciones_totales AS penalizaciones,
+            pe.descalificados AS descalificados
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id
@@ -53,13 +56,13 @@ $sql = "SELECT
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
         ORDER BY a.nivel_id ASC
-        LIMIT 1 OFFSET $currentIndex";
+        LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $performance_id = $row['performance_id']; 
+    $performance_id = $row['performance_id'];
     $concurso = $row['concurso'];
     $institucion = $row['institucion'];
     $logo = $row['logo'];
@@ -69,6 +72,7 @@ if ($result && $result->num_rows > 0) {
     $nivel = $row['nivel'];
     $tiempo_final = $row['tiempo_final'];
     $penalizaciones = $row['penalizaciones'];
+    $descalificados = $row['descalificados'];
 
     // Valores específicos para nivel 3
     $tiempo_deletreo = $row['tiempo_deletreo'] ?? '00:00';
@@ -80,13 +84,14 @@ if ($result && $result->num_rows > 0) {
 } else {
     $concurso = "No data";
     $institucion = "No data";
-    $logo = "images/logoinstitucion/default.png"; 
+    $logo = "images/logoinstitucion/default.png";
     $alumno = "No data";
     $profesor = "No data";
     $instance = "N/A";
     $nivel = "N/A";
     $tiempo_final = "00:00";
     $penalizaciones = 0;
+    $descalificados = 0;
 
     // Valores por defecto para nivel 3
     $tiempo_deletreo = '00:00';
@@ -102,26 +107,37 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronómetro</title>
+    <link rel="icon" href="./styles/images/icon.png">
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/estilos.css"> <!-- Estilos CSS -->
-    <style>
-        .boton-estilo {
-            background-color: #ffc107; /* Color amarillo */
-            border: 1px solid black; /* Borde negro */
-            border-radius: 12px; /* Bordes redondeados */
-            padding: 10px 20px; /* Padding para el tamaño del botón */
-            margin: 5px; /* Margen entre botones */
-        }
-    </style>
 </head>
-<body>
 
-<div>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="header-logo"><img src="./" alt=""></div>
+    <div class="header-title">PANAL DE CONTROL</div>
+    <div class="header-sign">
+        <a href="./index.html">
+            <button class="button_login">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#fb0" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+              <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+              <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+            </svg>
+            </button>
+        </a>
+    </div>
+</header>
+<!-- Data Section -->
+<section>
     <div class="contenedor">
         <h4 id="Titulo">Escuela Técnica "Carmen Molina de Llano"</h4>
     </div>
@@ -139,7 +155,6 @@ $conn->close();
             </div>
         </div>
     </div>
-
     <div class="container">
         <div class="info" id="participante">
             <div class="etiqueta">Alumno/a:</div>
@@ -147,11 +162,9 @@ $conn->close();
             <div class="etiqueta">Referente:</div>
             <div class="nombre"><?php echo $profesor; ?> </div>
         </div>
-   
     </div>
-
- <!-- Sección específica para nivel 3 -->
- <div class="container">
+    <!-- Sección específica para nivel 3 -->
+    <div class="container">
         <div class="info" id="level3">
             <div class="etiqueta">Deletreo:</div>
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
@@ -163,32 +176,28 @@ $conn->close();
             <div class="nombre"><?php echo $penalizacion_oracion; ?> </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="main-container">
+<section class="main-container">
     <div class="level-container">
         <div class="level-title">Nivel</div>
         <div class="level-value"><?php echo $nivel; ?></div>
     </div>
-
     <div class="round-container">
         <div class="round-title">Round</div>
         <div class="round-value"><?php echo $instance; ?></div>
     </div>
-
     <div id="cronometro"><?php echo $tiempo_final; ?></div>
     <div class="penalty-container">
         <div class="penalty-title">Penalty</div>
         <div class="penalty-value"><?php echo $penalizaciones; ?></div>
     </div>
-
     <div class="time-container">
         <div class="time-title">Time</div>
         <div class="time-value">45"</div>
     </div>
-</div>
-
-<div id="botones">
+</section>
+<section id="botones">
     <button id="startStop" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Start</button>
     <button id="reset" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Reset</button>
     <button id="penaltyM" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>P -</button>
@@ -197,56 +206,350 @@ $conn->close();
     <button id="prev" class="boton-estilo">Anterior</button>
     <button id="next" class="boton-estilo">Siguiente</button>
     <button id="ranking" class="boton-estilo">Ranking</button>
-</div>
-
+    <button id="deleted" class="boton-estilo">Disqualify</button>
+    <button id="audio" class="boton-estilo">Audio</button>
+</section>
 <!-- Bootstrap JS y jQuery (para el funcionamiento de Bootstrap) -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="cronometro.js"></script>
 <script>
-    document.getElementById("prev").addEventListener("click", function() {
-        window.location.href = "eventos.php?action=prev";
-    });
-
-    document.getElementById("next").addEventListener("click", function() {
-        window.location.href = "eventos.php?action=next";
-    });
-
-    document.getElementById("ranking").addEventListener("click", function() {
-        window.location.href = "ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>";
-    });
-
-    document.getElementById("guardar").addEventListener("click", function() {
-        const finalTime = tiempoFinal + penaltyValue * 5;  // Calcular el tiempo final con penalizaciones
-        const formattedTime = formatTime(finalTime);  // Formatear el tiempo final
-        
-        // Continuar con el proceso de guardar los datos
-        fetch('guardar.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                performance_id: <?php echo $performance_id; ?>,
-                tiempo: formattedTime,
-                penalizaciones: penaltyValue
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Datos guardados exitosamente');
-            } else {
-                alert('Error al guardar los datos');
+    document.addEventListener("DOMContentLoaded", function() {
+        // Variables globales
+        let timer;
+        let timer2;
+        let running = false;
+        let startTime;
+        let startSecondTime;
+        let elapsedTime = 0;
+        let elapsedSecondTime = 0;
+        let penaltyValue = 0;
+        let secondPenaltyValue = 0;
+        let startedTime = false;
+        let reseted = false;
+        let saved = false;
+        let level = <?php echo isset($nivel) ? json_encode($nivel) : 'null'; ?>;
+        let descalificado = <?php echo isset($descalificados) ? json_encode($descalificados) : 0 ?>;
+        let idActual = <?php echo $row['performance_id'] ?>;
+        console.log('Level: ' + level);
+        // Función para habilitar/deshabilitar botones
+        function togglePenaltyButton(enable) {
+            document.getElementById("penaltyP").disabled = !enable;
+            document.getElementById("guardar").disabled = !enable;
+        }
+        if (running) {
+            document.getElementById("penaltyP").disabled = !enable;
+            document.getElementById("penaltyM").disabled = !enable;
+            document.getElementById("guardar").disabled = !enable;
+            document.getElementById("next").disabled = !enable;
+            document.getElementById("prev").disabled = !enable;
+            document.getElementById("ranking").disabled = !enable;
+        }
+        function descalificar(idActual) {
+            console.log(idActual); // Asegúrate de usar el nombre correcto
+            if (confirm("¿Estás seguro de que deseas descalificar a este participante?")) {
+                fetch('./guardarDescalificados.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `id=${idActual}`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data); // Mensaje de éxito o error
+                        location.reload(); // Recargar la página para reflejar los cambios
+                    })
+                    .catch(error => console.error('Error:', error));
             }
-        })
-        .catch(error => {
-            console.error('Error al procesar la solicitud:', error);
-            alert('Error en la conexión con el servidor');
+        }
+        function iniciarCronometro() {
+            if (!running && reseted) {
+                if (level == 3) {
+                    if (startedTime) {
+                        // Inicia el segundo cronómetro
+                        running = true;
+                        startSecondTime = Date.now() - elapsedSecondTime;
+                        timer2 = setInterval(actualizarSegundoCronometro, 10);
+                        document.getElementById('cronometro').style.backgroundColor = 'green';
+                    } else {
+                        // Inicia el primer cronómetro
+                        running = true;
+                        startTime = Date.now() - elapsedTime;
+                        timer = setInterval(actualizarCronometro, 10);
+                        document.getElementById('cronometro').style.backgroundColor = '#101010';
+                    }
+                    togglePenaltyButton(false);
+                    console.log("startedTime:", startedTime);
+                    startedTime = !startedTime;
+                    console.log("startedTime:", startedTime);
+                } else {
+                    // Manejo para niveles diferentes a 3
+                    running = true;
+                    startTime = Date.now() - elapsedTime;
+                    timer = setInterval(actualizarCronometro, 10);
+                    togglePenaltyButton(false);
+                }
+                reseted = false;
+            }
+        }
+        function detenerCronometro() {
+            running = false;
+            clearInterval(timer);
+            clearInterval(timer2);
+            if (level == 3 && startedTime) {
+                elapsedSecondTime = Date.now() - startSecondTime; // Verifica esto                    
+            } else {
+                elapsedTime = Date.now() - startTime;
+            }
+            togglePenaltyButton(true);
+        }
+        function reiniciarCronometro() {
+            if (!running) {
+                if (level == 3 && startedTime) {
+                    running = false;
+                    clearInterval(timer2);
+                    elapsedSecondTime = 0;
+                    secondPenaltyValue = 0;
+                } else {
+                    running = false;
+                    clearInterval(timer);
+                    elapsedTime = 0;
+                    penaltyValue = 0;
+                }
+                document.querySelector(".penalty-value").innerText = penaltyValue;
+                document.getElementById("cronometro").innerText = "00.00";
+                reseted = true;
+                togglePenaltyButton(false);
+            }
+        }
+        function actualizarCronometro() {
+            if (running) {
+                elapsedTime = Date.now() - startTime;
+            }
+            const totalSeconds = elapsedTime / 1000;
+            const displaySegundos = Math.floor(totalSeconds).toString().padStart(2, '0');
+            const displayMilisegundos = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 100).toString().padStart(2, '0');
+            document.getElementById("cronometro").innerText = `${displaySegundos}.${displayMilisegundos}`;
+        }
+        function actualizarSegundoCronometro() {
+            if (running) {
+                elapsedSecondTime = Date.now() - startSecondTime;
+            }
+            const secondTotalSeconds = elapsedSecondTime / 1000;
+            const secondDisplaySegundos = Math.floor(secondTotalSeconds).toString().padStart(2, '0');
+            const secondDisplayMilisegundos = Math.floor((secondTotalSeconds - Math.floor(secondTotalSeconds)) * 100).toString().padStart(2, '0');
+            document.getElementById("cronometro").innerText = `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
+        }
+        function formatTime(totalSeconds) {
+            const secs = Math.floor(totalSeconds);
+            const ms = Math.floor((totalSeconds - secs) * 100);
+            const displaySegundos = secs.toString().padStart(2, '0');
+            const displayMilisegundos = ms.toString().padStart(2, '0');
+            console.log('TotalSeconds ' + totalSeconds);
+            console.log(`${displaySegundos}.${displayMilisegundos}`);
+            return `${displaySegundos}.${displayMilisegundos}`;
+        }
+        function formatSecondTime(secondTotalSeconds) {
+            const secondSecs = Math.floor(secondTotalSeconds);
+            const secondMs = Math.floor((secondTotalSeconds - secondSecs) * 100);
+            const secondDisplaySegundos = secondSecs.toString().padStart(2, '0');
+            const secondDisplayMilisegundos = secondMs.toString().padStart(2, '0');
+            console.log('SecondTotalSeconds ' + secondTotalSeconds);
+            console.log(`${secondDisplaySegundos}.${secondDisplayMilisegundos}`)
+            return `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
+        }
+        document.getElementById("deleted").addEventListener("click", function() {
+            descalificar(idActual);
         });
+        document.getElementById("startStop").addEventListener("click", function() {
+            if (level == 3 && startedTime) {
+                if (running) {
+                    detenerCronometro();
+                    this.innerText = "Start";
+                    console.log('Timer2: ' + timer2);
+                    console.log('StartSecondTime: ' + startSecondTime);
+                } else {
+                    iniciarCronometro();
+                    this.innerText = "Stop";
+                }
+            } else {
+                if (running) {
+                    detenerCronometro();
+                    this.innerText = "Start";
+                    console.log('Timer: ' + timer);
+                    console.log('StartTime: ' + startTime);
+                } else {
+                    iniciarCronometro();
+                    this.innerText = "Stop";
+                }
+            }
+        });
+        document.getElementById("reset").addEventListener("click", function() {
+            reiniciarCronometro();
+            document.getElementById("startStop").innerText = "Start";
+        });
+        document.getElementById("penaltyP").addEventListener("click", function() {
+            if (!this.disabled) {
+                if (level == 3 && !startedTime) {
+                    secondPenaltyValue += 1;
+                    const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                    document.querySelector(".penalty-value").innerText = secondPenaltyValue;
+                    document.getElementById("cronometro").innerText = formatSecondTime(cronometro);
+                    console.log(cronometro);
+                } else {
+                    penaltyValue += 1;
+                    const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
+                    document.querySelector(".penalty-value").innerText = penaltyValue;
+                    document.getElementById("cronometro").innerText = formatTime(cronometro);
+                    console.log(cronometro);
+                }
+            }
+        });
+        document.getElementById("penaltyM").addEventListener("click", function() {
+            if (penaltyValue > 0) {
+                if (level == 3 && startedTime) {
+                    secondPenaltyValue -= 1;
+                    const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                    document.querySelector(".penalty-value").innerText = secondPenaltyValue;
+                    document.getElementById("cronometro").innerText = formatSecondTime(cronometro);
+                    console.log(cronometro);
+                } else {
+                    penaltyValue -= 1;
+                    const cronometro = (elapsedTime / 1000) + penaltyValue * 5;
+                    document.querySelector(".penalty-value").innerText = penaltyValue;
+                    document.getElementById("cronometro").innerText = formatTime(cronometro);
+                    console.log(cronometro);
+                }
+            }
+        });
+        document.getElementById("deleted").addEventListener("click", function() {
+            if (!running) {
+            }
+        });
+        document.getElementById("guardar").addEventListener("click", function() {
+            if (!running) {
+                if (level == 3 && !startedTime && elapsedTime > 0) {
+                    const finalSecondTime = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                    const formattedTimeSentence = formatSecondTime(finalSecondTime);
+                    console.log('finalSecondTime: ' + finalSecondTime);
+                    console.log('formattedSecondTime: ' + formatSecondTime);
+                    fetch('guardar2.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                performance_id: <?php echo json_encode($performance_id); ?>,
+                                tiempo_oracion: formattedTimeSentence,
+                                penalizacion_oracion: secondPenaltyValue
+                            })
+                        })
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Respuesta del servidor:', text);
+                            return JSON.parse(text);
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log(data);
+                                saved = true;
+                                alert('Datos guardados exitosamente');
+                            } else {
+                                console.log(data);
+                                alert('Error al guardar los datos: ' + data.error);
+                                console.log(formattedTimeSentence);
+                                console.log(secondPenaltyValue);
+                            }
+                        }).catch(error => {
+                            console.error('Error al procesar la solicitud:', error);
+                            alert('Error al procesar la solicitud');
+                        });
+                } else {
+                    const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
+                    const formattedTime = formatTime(finalTime);
+                    console.log('finalTime: ' + finalTime)
+                    console.log('formattedTime: ' + formattedTime);
+                    fetch('guardar.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                performance_id: <?php echo json_encode($performance_id); ?>,
+                                tiempo: formattedTime,
+                                penalizaciones: penaltyValue,
+                            })
+                        })
+                        .then(response => response.text())
+                        .then(text => {
+                            console.log('Respuesta del servidor:', text);
+                            return JSON.parse(text);
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log(data);
+                                saved = true;
+                                alert('Datos guardados exitosamente');
+                            } else {
+                                console.log(data);
+                                alert('Error al guardar los datos: ' + data.error);
+                            }
+                        }).catch(error => {
+                            console.error('Error al procesar la solicitud:', error);
+                            alert('Error al procesar la solicitud');
+                        });
+                }
+            }
+        });
+        document.addEventListener("keydown", function(event) {
+            if ((event.key === " " || event.key === "Spacebar") && event.target.tagName !== "INPUT" && event.target.tagName !== "TEXTAREA") {
+                event.preventDefault();
+                console.log('Acabas de apretar: Spacebar');
+                document.getElementById("startStop").click();
+            } else if (event.key === "Enter") {
+                reiniciarCronometro();
+                console.log('Acabas de apretar: R');
+                document.getElementById("startStop").innerText = "Start";
+            } else if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                console.log('Acabas de apretar: <-');
+                document.getElementById("prev").click();
+            } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                console.log('Acabas de apretar: ->');
+                document.getElementById("next").click();
+            } else if (event.key === "G" || event.key === "g") {
+                event.preventDefault();
+                console.log('Acabas de apretar: G');
+                document.getElementById("siguienteInstancia").click();
+            } else if (event.key === "+" || event.key === "-") {
+                console.log('Acabas de apretar: + OR -');
+                document.getElementById(event.key === "+" ? "penaltyP" : "penaltyM").click();
+            } else if (event.key === "s" || event.key === "S") {
+                console.log('Acabas de apretar: S');
+                if (!document.getElementById("guardar").hasAttribute("disabled")) {
+                    document.getElementById("guardar").click();
+                }
+            } else if (event.key === "r" || event.key === "R") {
+                console.log('Acabas de apretar: R');
+                window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
+            } else if (event.key === "f" || event.key === "F"){
+                console.log('Acabas de apretar: F');
+                document.getElementById("deleted").click();
+            }
+        });
+        document.getElementById("prev").addEventListener("click", function() {
+            window.location.href = "navigation.php?action=prev";
+        });
+        document.getElementById("next").addEventListener("click", function() {
+            window.location.href = "navigation.php?action=next";
+        });
+        document.getElementById("ranking").addEventListener("click", function() {
+            window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
+        });
+        togglePenaltyButton(false); // Deshabilitar botón P+ y botón de guardar al cargar la página
     });
 </script>
-
 </body>
 </html>
