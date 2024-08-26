@@ -14,8 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (json_last_error() === JSON_ERROR_NONE && isset($data['performance_id']) && isset($data['tiempo_deletreo']) && isset($data['penalizacion_deletreo'])) {
         $performance_id = $data['performance_id'];
-        $tiempo = $data['tiempo_deletreo'];
-        $penalizaciones = $data['penalizacion_deletreo'];
+        $tiempo_deletreo = $data['tiempo_deletreo'];
+        $penalizacion_deletreo = $data['penalizacion_deletreo'];
 
         // Preparar la consulta para actualizar los datos del participante
         $sql_update = "UPDATE performance SET tiempo_deletreo = ?, penalizacion_deletreo = ? WHERE id = ?";
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-        $stmt->bind_param('sii', $tiempo_deletreo, $penalizacion_oracion, $performance_id);
+        $stmt->bind_param('ssi', $tiempo_deletreo, $penalizacion_deletreo, $performance_id);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {

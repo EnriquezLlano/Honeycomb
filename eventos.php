@@ -222,6 +222,8 @@ $conn->close();
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Variables globales
+        let firstSavedTime;
+        let secondSavedTime;
         let timer;
         let timer2;
         let running = false;
@@ -271,7 +273,7 @@ $conn->close();
         }
         function iniciarCronometro() {
             if (!running) {
-                if (level == 3) {
+                if (level == 3 && false) {
                     if (startedTime) {
                         // Inicia el segundo cronómetro
                         running = true;
@@ -283,7 +285,6 @@ $conn->close();
                         running = true;
                         startTime = Date.now() - elapsedTime;
                         timer = setInterval(actualizarCronometro, 10);
-                        document.getElementById('cronometro').style.backgroundColor = '#101010';
                     }
                     togglePenaltyButton(false);
                     console.log("startedTime:", startedTime);
@@ -303,8 +304,9 @@ $conn->close();
             running = false;
             clearInterval(timer);
             clearInterval(timer2);
-            if (level == 3 && startedTime) {
-                elapsedSecondTime = Date.now() - startSecondTime; // Verifica esto                    
+            if (false && level == 3 && startedTime) {
+                elapsedTime = Date.now() - startTime; // Verifica esto                    
+                firstSavedTime = elapsedTime
             } else {
                 elapsedTime = Date.now() - startTime;
             }
@@ -312,7 +314,7 @@ $conn->close();
         }
         function reiniciarCronometro() {
             if (!running) {
-                if (level == 3 && startedTime) {
+                if (false) {
                     running = false;
                     clearInterval(timer2);
                     elapsedSecondTime = 0;
@@ -339,16 +341,7 @@ $conn->close();
             const displayMilisegundos = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 100).toString().padStart(2, '0');
             const cronometro = `${displaySegundos}.${displayMilisegundos}`;
             document.getElementById("cronometro").innerText = cronometro.replace(".", ":");
-        }
-        function actualizarSegundoCronometro() {
-            if (running) {
-                elapsedSecondTime = Date.now() - startSecondTime;
-            }
-            const secondTotalSeconds = elapsedSecondTime / 1000;
-            const secondDisplaySegundos = Math.floor(secondTotalSeconds).toString().padStart(2, '0');
-            const secondDisplayMilisegundos = Math.floor((secondTotalSeconds - Math.floor(secondTotalSeconds)) * 100).toString().padStart(2, '0');
-            document.getElementById("cronometro").innerText = `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
-        }
+        };
         function formatTime(totalSeconds) {
             const secs = Math.floor(totalSeconds);
             const ms = Math.floor((totalSeconds - secs) * 100);
@@ -357,21 +350,12 @@ $conn->close();
             console.log('TotalSeconds ' + totalSeconds);
             console.log(`${displaySegundos}.${displayMilisegundos}`);
             return `${displaySegundos}.${displayMilisegundos}`;
-        }
-        function formatSecondTime(secondTotalSeconds) {
-            const secondSecs = Math.floor(secondTotalSeconds);
-            const secondMs = Math.floor((secondTotalSeconds - secondSecs) * 100);
-            const secondDisplaySegundos = secondSecs.toString().padStart(2, '0');
-            const secondDisplayMilisegundos = secondMs.toString().padStart(2, '0');
-            console.log('SecondTotalSeconds ' + secondTotalSeconds);
-            console.log(`${secondDisplaySegundos}.${secondDisplayMilisegundos}`)
-            return `${secondDisplaySegundos}.${secondDisplayMilisegundos}`;
-        }
+        };
         document.getElementById("deleted").addEventListener("click", function() {
             descalificar(idActual);
         });
         document.getElementById("startStop").addEventListener("click", function() {
-            if (level == 3 && startedTime) {
+            if (false) {
                 if (running) {
                     detenerCronometro();
                     this.innerText = "Start";
@@ -399,9 +383,10 @@ $conn->close();
         });
         document.getElementById("penaltyP").addEventListener("click", function() {
             if (!this.disabled) {
-                if (level == 3 && !startedTime) {
+                if (level == 3 && !startedTime && false) {
                     secondPenaltyValue += 1;
                     const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
+                    const secondSavedTime = cronometro;
                     document.querySelector(".penalty-value").innerText = secondPenaltyValue;
                     document.getElementById("cronometro").innerText = formatSecondTime(cronometro);
                     console.log(cronometro);
@@ -416,7 +401,7 @@ $conn->close();
         });
         document.getElementById("penaltyM").addEventListener("click", function() {
             if (penaltyValue > 0) {
-                if (level == 3 && startedTime) {
+                if (false && level == 3 && startedTime) {
                     secondPenaltyValue -= 1;
                     const cronometro = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
                     document.querySelector(".penalty-value").innerText = secondPenaltyValue;
@@ -437,78 +422,41 @@ $conn->close();
         });
         document.getElementById("guardar").addEventListener("click", function() {
             if (!running) {
-                if (level == 3 && !startedTime && elapsedTime > 0) {
-                    const finalSecondTime = (elapsedSecondTime / 1000) + secondPenaltyValue * 5;
-                    const formattedTimeSentence = formatSecondTime(finalSecondTime);
-                    console.log('finalSecondTime: ' + finalSecondTime);
-                    console.log('formattedSecondTime: ' + formatSecondTime);
-                    fetch('guardar2.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                performance_id: <?php echo json_encode($performance_id); ?>,
-                                tiempo_oracion: formattedTimeSentence,
-                                penalizacion_oracion: secondPenaltyValue
-                            })
-                        })
-                        .then(response => response.text())
-                        .then(text => {
-                            console.log('Respuesta del servidor:', text);
-                            return JSON.parse(text);
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                console.log(data);
-                                saved = true;
-                                alert('Datos guardados exitosamente');
-                            } else {
-                                console.log(data);
-                                alert('Error al guardar los datos: ' + data.error);
-                                console.log(formattedTimeSentence);
-                                console.log(secondPenaltyValue);
-                            }
-                        }).catch(error => {
-                            console.error('Error al procesar la solicitud:', error);
-                            alert('Error al procesar la solicitud');
-                        });
-                } else {
-                    const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
-                    const formattedTime = formatTime(finalTime);
-                    console.log('finalTime: ' + finalTime)
-                    console.log('formattedTime: ' + formattedTime);
-                    fetch('guardar.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                performance_id: <?php echo json_encode($performance_id); ?>,
-                                tiempo_deletreo: formattedTime,
-                                penalizacion_deletreo: penaltyValue,
-                            })
-                        })
-                        .then(response => response.text())
-                        .then(text => {
-                            console.log('Respuesta del servidor:', text);
-                            return JSON.parse(text);
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                console.log(data);
-                                saved = true;
-                                alert('Datos guardados exitosamente');
-                            } else {
-                                console.log(data);
-                                alert('Error al guardar los datos: ' + data.error);
-                            }
-                        }).catch(error => {
-                            console.error('Error al procesar la solicitud:', error);
-                            alert('Error al procesar la solicitud');
-                        });
-                }
+                const finalTime = (elapsedTime / 1000) + penaltyValue * 5;
+                const formattedTime = formatTime(finalTime);
+                console.log('finalTime: ' + finalTime)
+                console.log('formattedTime: ' + formattedTime);
+                fetch('guardar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        performance_id: <?php echo json_encode($performance_id); ?>,
+                        tiempo_deletreo: formattedTime,
+                        penalizacion_deletreo: penaltyValue,
+                    })
+                })
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Respuesta del servidor:', text);
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    if (data.success) {
+                        console.log(data);
+                        saved = true;
+                        alert('Datos guardados exitosamente');
+                    } else {
+                        console.log(data);
+                        alert('Error al guardar los datos: ' + data.error);
+                    }
+                }).catch(error => {
+                    console.error('Error al procesar la solicitud:', error);
+                    alert('Error al procesar la solicitud');
+                });
             }
+
         });
         document.addEventListener("keydown", function(event) {
             if ((event.key === " " || event.key === "Spacebar") && event.target.tagName !== "INPUT" && event.target.tagName !== "TEXTAREA") {
