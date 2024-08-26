@@ -7,7 +7,7 @@ $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "N/A";
 $instanciaActual = isset($_GET['instancia']) ? $_GET['instancia'] : "N/A";
 
 // Consulta SQL para obtener el ranking de la performance del nivel y la instancia
-$sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo AS tiempo_final, pe.tiempo_oracion AS tiempo_oracion, pe.penalizacion AS penalizaciones, pe.descalificados AS descalificado
+$sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo_deletreo AS tiempo_final, pe.tiempo_oracion AS tiempo_oracion, pe.penalizacion_deletreo AS penalizaciones, pe.descalificados AS descalificado
         FROM performance pe
         JOIN alumnos a ON pe.alumno_id = a.id
         JOIN instituciones i ON a.institucion_id = i.id

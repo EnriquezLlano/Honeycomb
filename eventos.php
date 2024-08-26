@@ -2,34 +2,10 @@
 require 'conexion.php';
 session_start();
 
-// Verificar la acción del botón
-if (isset($_GET['action'])) {
-    if ($_GET['action'] == 'next') {
-        $_SESSION['current_index']++;
-    } elseif ($_GET['action'] == 'prev') {
-        if ($_SESSION['current_index'] > 0) {
-            $_SESSION['current_index']--;
-        }
-    }
-}
-
-// Obtener el índice actual y asegurarse de que no sea menor que 0
+// Obtener el índice actual
 if (!isset($_SESSION['current_index'])) {
     $_SESSION['current_index'] = 0;
-} elseif ($_SESSION['current_index'] < 0) {
-    $_SESSION['current_index'] = 0;
 }
-
-// Calcular el total de registros
-$totalRecordsResult = $conn->query("SELECT COUNT(*) AS total FROM performance pe JOIN alumnos a ON pe.alumno_id = a.id");
-$totalRecords = $totalRecordsResult->fetch_assoc()['total'];
-
-// Asegurarse de que el índice no exceda el número de registros
-if ($_SESSION['current_index'] >= $totalRecords) {
-    $_SESSION['current_index'] = $totalRecords - 1;
-}
-
-// Obtener el índice actual
 $currentIndex = $_SESSION['current_index'];
 
 // Consulta SQL corregida para obtener la información del registro actual, ordenada por niveles
@@ -55,10 +31,13 @@ $sql = "SELECT
         JOIN profesores p ON a.profesor_id = p.id
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
-        ORDER BY a.nivel_id ASC
-        LIMIT 100 OFFSET $currentIndex";
+        ORDER BY ins.id ASC, a.nivel_id ASC 
+        LIMIT 1 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
+if (!$result) {
+    die("Error en la consulta: " . $conn->error);
+}
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
@@ -101,7 +80,6 @@ if ($result && $result->num_rows > 0) {
 
     $deshabilitarBotones = false;
 }
-echo $instance;
 
 $conn->close();
 ?>
@@ -121,8 +99,20 @@ $conn->close();
 <body>
 <!-- Header -->
 <header class="header">
-    <div class="header-logo"><img src="./" alt=""></div>
-    <div class="header-title">PANAL DE CONTROL</div>
+    <div class="header-logo"><img src="./styles/images/logo.png" alt=""></div>
+    <!-- <div class="header-title"></div> -->
+    <div class="header-sign">
+    <a href="./verificacion.php">
+        <button class="button_login">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+        </svg>
+        </button>
+    </a>
+    </div>
     <div class="header-sign">
         <a href="./index.html">
             <button class="button_login">
@@ -170,22 +160,22 @@ $conn->close();
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
             <div class="etiqueta">Penalización:</div>
             <div class="nombre"><?php echo $penalizacion_deletreo; ?> </div>
-            <div class="etiqueta">Oración:</div>
+            <!-- <div class="etiqueta">Oración:</div>
             <div class="nombre"><?php echo $tiempo_oracion; ?></div>
             <div class="etiqueta">Penalización:</div>
-            <div class="nombre"><?php echo $penalizacion_oracion; ?> </div>
+            <div class="nombre"><?php echo $penalizacion_oracion; ?> </div> -->
         </div>
     </div>
 </section>
 
 <section class="main-container">
-    <div class="level-container">
-        <div class="level-title">Nivel</div>
-        <div class="level-value"><?php echo $nivel; ?></div>
+    <div class="sub-main-container level-container">
+        <div class="sub-tittle level-title">Nivel</div>
+        <div class="sub-value level-value"><?php echo $nivel; ?></div>
     </div>
-    <div class="round-container">
-        <div class="round-title">Round</div>
-        <div class="round-value"><?php echo $instance; ?></div>
+    <div class="sub-main-container round-container">
+        <div class="sub-tittle round-title">Round</div>
+        <div class="sub-value round-value"><?php echo $instance; ?></div>
     </div>
     <div id="cronometro"><?php 
     if ($nivel == 3){
@@ -194,13 +184,13 @@ $conn->close();
     }else{
         echo $tiempo_deletreo;  
     };?></div>
-    <div class="penalty-container">
-        <div class="penalty-title">Penalty</div>
-        <div class="penalty-value"><?php echo $penalizaciones; ?></div>
+    <div class="sub-main-container penalty-container">
+        <div class="sub-tittle penalty-title">Penalty</div>
+        <div class="sub-value penalty-value"><?php echo $penalizaciones; ?></div>
     </div>
-    <div class="time-container">
-        <div class="time-title">Time</div>
-        <div class="time-value">45"</div>
+    <div class="sub-main-container time-container">
+        <div class="sub-tittle time-title">Time</div>
+        <div class="sub-value time-value">45"</div>
     </div>
 </section>
 <section id="botones">
@@ -215,6 +205,11 @@ $conn->close();
     <button id="deleted" class="boton-estilo">Disqualify</button>
     <button id="audio" class="boton-estilo">Audio</button>
 </section>
+<h4 id="deleted"><?php if ($descalificados == 1 || $descalificados == true) {
+        echo "DISQUALIFIED";
+    }else{
+        echo "<script>document.getElementById('deleted').style.display = 'none'</script>";
+    } ?></h4>
 <!-- Bootstrap JS y jQuery (para el funcionamiento de Bootstrap) -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -243,7 +238,7 @@ $conn->close();
         // Función para habilitar/deshabilitar botones
         function togglePenaltyButton(enable) {
             document.getElementById("penaltyP").disabled = !enable;
-            document.getElementById("guardar").disabled = !enable;
+            // document.getElementById("guardar").disabled = !enable;
         }
         if (running) {
             document.getElementById("penaltyP").disabled = !enable;
