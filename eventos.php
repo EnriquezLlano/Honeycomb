@@ -168,9 +168,9 @@ $conn->close();
     </div>
 </section>
 
-<section class="main-container">
+<section class="main-container" id="deleted-container">
     <div class="sub-main-container level-container">
-        <div class="sub-tittle level-title">Nivel</div>
+        <div class="sub-tittle level-title">Level</div>
         <div class="sub-value level-value"><?php echo $nivel; ?></div>
     </div>
     <div class="sub-main-container round-container">
@@ -202,11 +202,12 @@ $conn->close();
     <button id="prev" class="boton-estilo">Anterior</button>
     <button id="next" class="boton-estilo">Siguiente</button>
     <button id="ranking" class="boton-estilo">Ranking</button>
-    <button id="deleted" class="boton-estilo">Disqualify</button>
+    <button id="delete" class="boton-estilo">Disqualify</button>
     <button id="audio" class="boton-estilo">Audio</button>
 </section>
 <h4 id="deleted"><?php if ($descalificados == 1 || $descalificados == true) {
         echo "DISQUALIFIED";
+        echo "<script>document.getElementById('deleted-container').style.display = 'none'</script>";
     }else{
         echo "<script>document.getElementById('deleted').style.display = 'none'</script>";
     } ?></h4>
@@ -239,7 +240,7 @@ $conn->close();
         function togglePenaltyButton(enable) {
             document.getElementById("penaltyP").disabled = !enable;
             // document.getElementById("guardar").disabled = !enable;
-        }
+        };
         if (running) {
             document.getElementById("penaltyP").disabled = !enable;
             document.getElementById("penaltyM").disabled = !enable;

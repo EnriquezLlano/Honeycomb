@@ -4,8 +4,9 @@ body {
   opacity: 0.9;
   background-color: rgb(241, 241, 213);
   background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='29' height='50.115' patternTransform='scale(5) rotate(30)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 95%, 1)'/><path d='M14.498 16.858L0 8.488.002-8.257l14.5-8.374L29-8.26l-.002 16.745zm0 50.06L0 58.548l.002-16.745 14.5-8.373L29 41.8l-.002 16.744zM28.996 41.8l-14.498-8.37.002-16.744L29 8.312l14.498 8.37-.002 16.745zm-29 0l-14.498-8.37.002-16.744L0 8.312l14.498 8.37-.002 16.745z'  stroke-width='1.5' stroke='hsla(45, 96%, 48%, 1)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,-1.1500000000000001)' fill='url(%23a)'/></svg>");
+  /* background-image: url(./images/blanco3.jpg); */
   background-size: cover;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 /* HEADER */
@@ -121,7 +122,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* margin-top: 10px; */
+  margin-top: 10px;
 }
 
 .info {
@@ -144,13 +145,17 @@ body {
 }
 
 .nombre {
+  padding: 2px;
   font-weight: bold;
   margin-right: 30px;
   font-size: 29px;
-  /* background-color: #f7d53de5;
-  border: 3px solid rgb(8, 8, 8);
-  border-radius: 15% 0% 15% 0%;
-  color: rgb(7, 7, 7); */
+  background-color: #b8b8b8e5;
+  border: 2px solid rgb(140, 140, 140);
+  /* border-radius: 16px; */
+  color: rgb(7, 7, 7);
+  height: fit-content;
+  min-width: 50px;
+  text-align: center;
 }
 
 .nivel {
@@ -171,7 +176,7 @@ body {
 
 .etiqueta {
   font-weight: bold;
-  color: rgb(88, 72, 180);
+  color: rgb(30, 30, 30);
   font-size: 30px;
   font-style: italic;
 }
@@ -321,23 +326,25 @@ body {
   color: rgb(247, 244, 244);
 }
 .boton-estilo {
-  background-color: #ffc107;
-  /* Color amarillo */
-  border: 1px solid black;
-  /* Borde negro */
+  background-color: transparent;
+  border: none;
+  color: transparent;
   border-radius: 12px;
-  /* Bordes redondeados */
   padding: 10px 20px;
-  /* Padding para el tamaño del botón */
   margin: 5px;
-  /* Margen entre botones */
+}
+.boton-estilo:hover{
+  cursor:default;
 }
 #botones {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
-#botones button {
+#botones:hover{
+  cursor:default;
+}
+/* #botones button {
   margin: 0 4px;
   height: 60px;
   border-radius: 700px;
@@ -345,40 +352,7 @@ body {
   color: rgb(7, 7, 7);
   border: 4px solid rgb(46, 46, 46);
   width: 100px;
-}
-#startStop {
-  background-color: #99f56fe5;
-}
-#reset {
-  background-color: #f76cf0e5;
-}
-#penalty {
-  background-color: #f52977c0;
-}
-#guardar {
-  background-color: #f30404c0;
-}
-#prev {
-  background-color: #ffb347;
-}
-#next {
-  background-color: #1e90ff;
-}
-#penaltyMinus {
-  background-color: #f52977c0;
-}
-#penaltyPlus {
-  background-color: #f52977c0;
-}
-/* Estilos adicionales para los botones P+ y P- */
-#penaltyP {
-  background-color: yellow;
-  color: black;
-}
-#penaltyM {
-  background-color: yellow;
-  color: black;
-}
+} */
 #deleted {
   margin: 50px auto;
   font-size: 50px;
