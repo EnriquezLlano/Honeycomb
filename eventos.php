@@ -351,26 +351,14 @@ $conn->close();
             descalificar(idActual);
         });
         document.getElementById("startStop").addEventListener("click", function() {
-            if (false) {
-                if (running) {
-                    detenerCronometro();
-                    this.innerText = "Start";
-                    console.log('Timer2: ' + timer2);
-                    console.log('StartSecondTime: ' + startSecondTime);
-                } else {
-                    iniciarCronometro();
-                    this.innerText = "Stop";
-                }
+            if (running) {
+                detenerCronometro();
+                this.innerText = "Start";
+                console.log('Timer: ' + timer);
+                console.log('StartTime: ' + startTime);
             } else {
-                if (running) {
-                    detenerCronometro();
-                    this.innerText = "Start";
-                    console.log('Timer: ' + timer);
-                    console.log('StartTime: ' + startTime);
-                } else {
-                    iniciarCronometro();
-                    this.innerText = "Stop";
-                }
+                iniciarCronometro();
+                this.innerText = "Stop";
             }
         });
         document.getElementById("reset").addEventListener("click", function() {
