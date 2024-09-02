@@ -26,9 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($row) {
                 // Insertar una nueva fila con la instancia incrementada
                 $new_instance = $row['instancia_id'] + 1; // Aumentar la instancia
+                $resetedTime = ($row['tiempo_deletreo'] = '00:00');
                 $query = "INSERT INTO performance (alumno_id, nivel_id, instancia_id, tiempo_deletreo, penalizacion_deletreo) VALUES (?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
-                $stmt->bind_param("iiiss", $row['alumno_id'], $row['nivel_id'], $new_instance, $row['tiempo_deletreo'], $row['penalizacion_deletreo']);
+                $stmt->bind_param("iiiss", $row['alumno_id'], $row['nivel_id'], $new_instance, $resetedTime, $row['penalizacion_deletreo']);
                 $stmt->execute();
             }
         }

@@ -1,0 +1,48 @@
+body {
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    display: flex;
+    position: fixed;
+}
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+section{
+    width: 100%;
+    height: fit-content;
+    float: left;
+    text-align: center;
+}
+/* .rafiki-container{
+    display: flex;
+    position: fixed;
+    width: 30%;
+    height: 500px;
+    padding: 10px;
+    text-align: center;
+    overflow: hidden;
+    flex-direction: row-reverse;
+    top: 100px;
+    right: 100px;
+}
+.qr{
+    aspect-ratio: 1/1;
+    width: 350px;
+    height: 350px;
+} */
+.thanks{
+    text-decoration: none;
+    color: #666;
+}

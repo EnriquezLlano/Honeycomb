@@ -32,7 +32,7 @@ $sql = "SELECT
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
         ORDER BY ins.id ASC, a.nivel_id ASC 
-        LIMIT 1 OFFSET $currentIndex";
+        LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
 if (!$result) {
@@ -156,7 +156,7 @@ $conn->close();
     <!-- Sección específica para nivel 3 -->
     <div class="container">
         <div class="info" id="level3">
-            <div class="etiqueta">Deletreo:</div>
+            <div class="etiqueta">Tiempo:</div>
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
             <div class="etiqueta">Penalización:</div>
             <div class="nombre"><?php echo $penalizacion_deletreo; ?> </div>

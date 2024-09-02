@@ -171,11 +171,11 @@
                 <div class="footer-col">
                     <h4>Contactenos</h4>
                     <ul>
-                        <li><a href="#">semmanuelenriquez@gmail.com</a></li>
-                        <li><a href="#">@gmail.com</a></li>
-                        <li><a href="#">@gmail.com</a></li>
-                        <li><a href="#">@gmail.com</a></li>
-                        <li><a href="#">@gmail.com</a></li>
+                        <li><a href="#." onclick="copiarCorreo(this)" class="correo">semmanuelenriquez@gmail.com</a></li>
+                        <li><a href="#." onclick="copiarCorreo(this)" class="correo">maldonadobianca2465@gmail.com</a></li>
+                        <li><a href="#." onclick="copiarCorreo(this)" class="correo">urielsjt@gmail.com</a></li>
+                        <li><a href="#." onclick="copiarCorreo(this)" class="correo">natashacabrera.escuela@gmail.com</a></li>
+                        <li><a href="#." onclick="copiarCorreo(this)" class="correo">crozdx@gmail.com</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -194,6 +194,7 @@
                     <h4>Equipo</h4>
                     <ul>
                         <li><a href="./sobreNosotros.html">Sobre Nosotros</a></li>
+                        <li><a href="./formulario.html">Ayudanos a mejorar</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -215,6 +216,23 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copiarCorreo(elemento) {
+            // Obtiene el texto del elemento (correo electrónico)
+            var correo = elemento.innerText;
+        
+            // Utiliza la API de Portapapeles para copiar el texto
+            navigator.clipboard.writeText(correo)
+                .then(() => {
+                    // Opcional: muestra una notificación de que el correo ha sido copiado
+                    alert("Correo copiado: " + correo);
+                })
+                .catch(err => {
+                    // Maneja cualquier error que ocurra durante la copia
+                    console.error("Error al copiar el correo: ", err);
+                });
+        };
+    </script>
 </body>
 
 </html>
