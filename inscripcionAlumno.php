@@ -9,27 +9,43 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+// Recuperar el ID del evento desde la URL o LocalStorage
+$eventoId = isset($_GET['certamen_id']) ? $_GET['certamen_id'] : 0;
+
+// Verificar que el ID del evento esté presente
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Inicializar variable de búsqueda
 $search = "";
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-// Consulta SQL con INNER JOIN para obtener los datos
-$sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, profesores.nombre AS nombre_profesor, instituciones.nombre AS nombre_institucion 
+// Consulta SQL con INNER JOIN para obtener los datos filtrados por evento
+$sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, 
+                profesores.nombre AS nombre_profesor, 
+                instituciones.nombre AS nombre_institucion 
         FROM alumnos 
         INNER JOIN profesores ON alumnos.profesor_id = profesores.id 
-        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id";
+        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id 
+        INNER JOIN certamenes ON alumnos.id = inscripciones.alumno_id 
+        WHERE inscripciones.evento_id = ?"; // Filtrar por evento
 
 if (!empty($search)) {
-    $sql .= " WHERE alumnos.nombre LIKE ?";
+    $sql .= " AND alumnos.nombre LIKE ?";
 }
 
 $stmt = $conn->prepare($sql);
 
+// Verificar y vincular los parámetros según si hay búsqueda
 if (!empty($search)) {
     $searchTerm = "%" . $search . "%";
-    $stmt->bind_param("s", $searchTerm);
+    $stmt->bind_param("is", $eventoId, $searchTerm);
+} else {
+    $stmt->bind_param("i", $eventoId);
 }
 
 $stmt->execute();
@@ -42,48 +58,25 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alumnos</title>
-    <!-- Bootstrap CDN -->
+    <!-- Bootstrap y estilos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Fuente Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-        h1 {
-            font-weight: 700;
-        }
-        .btn-custom {
-            background-color: #007bff;
-            color: white;
-            border: none;
-        }
-        .btn-custom:hover {
-            background-color: #0056b3;
-        }
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-        .table {
-            border: 1px solid black;
-        }
-        .table thead th {
-            border: 1px solid black;
-        }
-        .table tbody td {
-            border: 1px solid black;
-        }
-        .bottom-container{
-            width: fit-content;
-            margin: 0 auto;
-        }
+        body { font-family: 'Roboto', sans-serif; }
+        h1 { font-weight: 700; }
+        .btn-custom { background-color: #007bff; color: white; border: none; }
+        .btn-custom:hover { background-color: #0056b3; }
+        .table th, .table td { text-align: center; vertical-align: middle; }
+        .table { border: 1px solid black; }
+        .table thead th { border: 1px solid black; }
+        .table tbody td { border: 1px solid black; }
+        .bottom-container { width: fit-content; margin: 0 auto; }
     </style>
 </head>
 <body>
     <div class="container my-5">
         <div class="text-center">
-            <h1>Alumnos</h1>
+            <h1>Alumnos Inscritos</h1>
         </div>
         <div class="d-flex justify-content-center mb-4">
             <form method="POST" action="">

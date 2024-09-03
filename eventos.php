@@ -8,6 +8,7 @@ if (!isset($_SESSION['current_index'])) {
 }
 $currentIndex = $_SESSION['current_index'];
 
+$certamen = 2;
 // Consulta SQL corregida para obtener la información del registro actual, ordenada por niveles
 $sql = "SELECT 
             pe.id AS performance_id, 
@@ -17,7 +18,8 @@ $sql = "SELECT
             a.nombre AS alumno, 
             p.nombre AS profesor_nombre, 
             ins.id AS instancia, 
-            a.nivel_id AS nivel, 
+            a.nivel_id AS nivel,
+            a.certamen_id AS certamen_id, 
             pe.tiempo_deletreo AS tiempo_deletreo, 
             pe.tiempo_oracion AS tiempo_oracion, 
             pe.tiempo_final AS tiempo_final,
@@ -31,7 +33,8 @@ $sql = "SELECT
         JOIN profesores p ON a.profesor_id = p.id
         JOIN instancias ins ON pe.instancia_id = ins.id
         JOIN certamenes ce ON ins.certamen_id = ce.id
-        ORDER BY ins.id ASC, a.nivel_id ASC 
+        WHERE a.certamen_id = $certamen
+        ORDER BY ins.id ASC, a.nivel_id ASC
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -212,9 +215,9 @@ $conn->close();
         echo "<script>document.getElementById('deleted').style.display = 'none'</script>";
     } ?></h4>
 <!-- Bootstrap JS y jQuery (para el funcionamiento de Bootstrap) -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="./js/boostrapSlimJs.js"></script>
+<script src="./js/boostrapPoppeJs.js"></script>
+<script src="./js/boostrapMinJs.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Variables globales
