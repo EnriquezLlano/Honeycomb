@@ -1,5 +1,5 @@
 <?php
-require './conexion.php';
+require './conexion.php'; 
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -9,10 +9,11 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Recuperar el ID del evento desde la URL o LocalStorage
-$eventoId = isset($_GET['certamen_id']) ? $_GET['certamen_id'] : 0;
+$eventoId = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
 
-// Verificar que el ID del evento esté presente
+// Debugging: Mostrar el valor de $eventoId
+echo "ID del evento: " . $eventoId;
+
 if ($eventoId == 0) {
     echo "No se ha seleccionado un evento válido.";
     exit;
@@ -24,15 +25,14 @@ if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-// Consulta SQL con INNER JOIN para obtener los datos filtrados por evento
 $sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, 
                 profesores.nombre AS nombre_profesor, 
                 instituciones.nombre AS nombre_institucion 
         FROM alumnos 
         INNER JOIN profesores ON alumnos.profesor_id = profesores.id 
         INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id 
-        INNER JOIN certamenes ON alumnos.id = inscripciones.alumno_id 
-        WHERE inscripciones.evento_id = ?"; // Filtrar por evento
+        INNER JOIN certamenes ON alumnos.certamen_id = certamenes.id
+        WHERE certamenes.id = ?";
 
 if (!empty($search)) {
     $sql .= " AND alumnos.nombre LIKE ?";
@@ -64,6 +64,7 @@ $result = $stmt->get_result();
     <style>
         body { font-family: 'Roboto', sans-serif; }
         h1 { font-weight: 700; }
+        .btn{ max-height: 40px;}
         .btn-custom { background-color: #007bff; color: white; border: none; }
         .btn-custom:hover { background-color: #0056b3; }
         .table th, .table td { text-align: center; vertical-align: middle; }
@@ -119,9 +120,9 @@ $result = $stmt->get_result();
         </table>
         <div class="bottom-container">
             <a href="./inscripcionInstitucion.php" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
-            <a href="./inscripcionProfesor.php" class="btn-bottom btn btn-primary ms-3">Profesores</a>
-            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Evetos Registrados</a>
-            <a href="./eventos.php" class="btn-bottom btn btn-primary ms-3">Ir al cronometro</a>
+            <a href="./inscripcionProfesor.php?certamen_id=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Profesores</a>
+            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
+            <a href="./eventos.php" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
         </div>
     </div>
 

@@ -117,9 +117,8 @@ $result = $conn->query($sql);
             // Doble clic para ir a la inscripción
             button.addEventListener('dblclick', () => {
                 if (selectedEventId) {
-                    // Guardar el ID en localStorage y redirigir
-                    localStorage.setItem('selectedEventId', selectedEventId);
-                    window.location.href = 'inscripcionAlumno.php';
+                    // Redirigir con el ID seleccionado
+                    window.location.href = `inscripcionAlumno.php?certamen_id=${selectedEventId}`;
                 }
             });
         });
@@ -155,9 +154,8 @@ $result = $conn->query($sql);
         // Manejo del botón de inscripción
         document.getElementById('btnInscripcion').addEventListener('click', () => {
             if (selectedEventId) {
-                // Guardar el ID en localStorage y redirigir
-                localStorage.setItem('selectedEventId', selectedEventId);
-                window.location.href = 'inscripcionAlumno.php';
+                // Redirigir con el ID seleccionado
+                window.location.href = `inscripcionAlumno.php?certamen_id=${selectedEventId}`;
             } else {
                 alert('Por favor, selecciona un evento para inscribir.');
             }

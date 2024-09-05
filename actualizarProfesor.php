@@ -9,25 +9,60 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Obtener el ID del profesor a actualizar
-$profesorId = $_GET['id'];
+// Validar que el ID del profesor esté presente en la URL
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID del profesor no especificado.");
+}
+
+$profesorId = intval($_GET['id']); // Convertir a entero
+echo "ID del profesor recibido: " . htmlspecialchars($profesorId) . "<br>";
 
 // Consultar datos actuales del profesor
 $sqlProfesor = "SELECT * FROM profesores WHERE id = ?";
 $stmtProfesor = $conn->prepare($sqlProfesor);
+
+if (!$stmtProfesor) {
+    die("Error en la preparación de la consulta: " . $conn->error);
+}
+
 $stmtProfesor->bind_param("i", $profesorId);
 $stmtProfesor->execute();
+
+if ($stmtProfesor->errno) {
+    die("Error al ejecutar la consulta: " . $stmtProfesor->error);
+}
+
 $resultProfesor = $stmtProfesor->get_result();
+
+// Verificar si se encontraron resultados
+if ($resultProfesor->num_rows == 0) {
+    echo "<pre>";
+    print_r($_GET);
+    echo "</pre>";
+    die("Profesor no encontrado con el ID especificado.");
+}
+
 $profesor = $resultProfesor->fetch_assoc();
+
+if (!$profesor || !isset($profesor['nombre'])) {
+    die("Error al obtener los datos del profesor.");
+}
 
 // Actualizar datos del profesor
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtener el nombre del profesor desde el formulario
     $nombre = $_POST['nombre'];
 
+    // Preparar la consulta de actualización
     $sqlUpdate = "UPDATE profesores SET nombre = ? WHERE id = ?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
+
+    if (!$stmtUpdate) {
+        die("Error en la preparación de la actualización: " . $conn->error);
+    }
+
     $stmtUpdate->bind_param("si", $nombre, $profesorId);
-    
+
     if ($stmtUpdate->execute()) {
         echo "<div class='alert alert-success text-center' role='alert'>Datos actualizados correctamente</div>";
     } else {

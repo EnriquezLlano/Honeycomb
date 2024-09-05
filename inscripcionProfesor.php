@@ -1,27 +1,46 @@
 <?php
 require './conexion.php';
 
-// Inicializar variable de búsqueda
+// Inicializar variables
 $search = "";
-if (isset($_POST['search'])) {
-    $search = $_POST['search'];
+$certamenId = "";
+
+// Recuperar valores enviados por GET en lugar de POST
+if (isset($_GET['search'])) {
+    $search = $_GET['search'];
 }
 
-// Consulta SQL con INNER JOIN para obtener los datos
-$sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, profesores.nombre AS nombre_profesor, instituciones.nombre AS nombre_institucion 
-        FROM alumnos 
-        INNER JOIN profesores ON alumnos.profesor_id = profesores.id 
-        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id";
+if (isset($_GET['certamen_id'])) {
+    $certamenId = $_GET['certamen_id'];
+}
+
+// Verificar si el ID del certamen está presente
+if (empty($certamenId)) {
+    die("Certamen no especificado.");
+}
+
+// Consulta SQL con INNER JOIN para obtener los datos y filtrar por certamen
+$sql = "SELECT profesores.id AS id_profesor, 
+               profesores.nombre AS nombre_profesor, 
+               instituciones.nombre AS nombre_institucion 
+        FROM profesores 
+        INNER JOIN alumnos ON alumnos.profesor_id = profesores.id
+        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id
+        INNER JOIN certamenes ON alumnos.certamen_id = certamenes.id
+        WHERE certamenes.id = ?";
 
 if (!empty($search)) {
-    $sql .= " WHERE profesores.nombre LIKE ?";
+    $sql .= " AND profesores.nombre LIKE ?";
 }
 
 $stmt = $conn->prepare($sql);
 
+// Configurar los parámetros de la consulta
 if (!empty($search)) {
     $searchTerm = "%" . $search . "%";
-    $stmt->bind_param("s", $searchTerm);
+    $stmt->bind_param("is", $certamenId, $searchTerm);
+} else {
+    $stmt->bind_param("i", $certamenId);
 }
 
 $stmt->execute();
@@ -74,9 +93,10 @@ $result = $stmt->get_result();
             <h1>Profesores</h1>
         </div>
         <div class="d-flex justify-content-center mb-4">
-            <form method="POST" action="">
+            <form method="GET" action="">
                 <div class="input-group">
                     <input type="text" class="form-control" name="search" placeholder="Buscar profesor" value="<?php echo htmlspecialchars($search); ?>">
+                    <input type="hidden" name="certamen_id" value="<?php echo htmlspecialchars($certamenId); ?>">
                     <button class="btn btn-custom" type="submit">Buscar</button>
                 </div>
             </form>
@@ -86,7 +106,6 @@ $result = $stmt->get_result();
             <thead class="thead-dark">
                 <tr>
                     <th>Nombre del Profesor</th>
-                    <th>Nombre del Alumno</th>
                     <th>Nombre de la Institución</th>
                     <th>Acciones</th>
                 </tr>
@@ -96,18 +115,17 @@ $result = $stmt->get_result();
                     <?php while($row = $result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($row['nombre_profesor']); ?></td>
-                            <td><?php echo htmlspecialchars($row['nombre_alumno']); ?></td>
                             <td><?php echo htmlspecialchars($row['nombre_institucion']); ?></td>
                             <td>
-                                <a href="consultarProfesor.php?id=<?php echo $row['id_alumno']; ?>" class="btn btn-primary btn-sm">Consultar</a>
-                                <a href="actualizarProfesor.php?id=<?php echo $row['id_alumno']; ?>" class="btn btn-warning btn-sm">Actualizar</a>
+                                <a href="consultarProfesor.php?id=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-primary btn-sm">Consultar</a>
+                                <a href="actualizarProfesor.php?id=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-warning btn-sm">Actualizar</a>
                                 <button class="btn btn-danger btn-sm">Eliminar</button>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4">No se encontraron registros</td>
+                        <td colspan="3">No se encontraron registros</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

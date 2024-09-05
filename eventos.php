@@ -8,8 +8,8 @@ if (!isset($_SESSION['current_index'])) {
 }
 $currentIndex = $_SESSION['current_index'];
 
-$certamen = 2;
-// Consulta SQL corregida para obtener la información del registro actual, ordenada por niveles
+// $certamen = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
+$certamen = 1;
 $sql = "SELECT 
             pe.id AS performance_id, 
             ce.nombre AS concurso, 
@@ -219,6 +219,7 @@ $conn->close();
 <script src="./js/boostrapPoppeJs.js"></script>
 <script src="./js/boostrapMinJs.js"></script>
 <script>
+    console.log(<?php $certamen?>);
     document.addEventListener("DOMContentLoaded", function() {
         // Variables globales
         let firstSavedTime;
