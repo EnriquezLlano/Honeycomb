@@ -11,8 +11,7 @@ if ($conn->connect_error) {
 
 $eventoId = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
 
-// Debugging: Mostrar el valor de $eventoId
-echo "ID del evento: " . $eventoId;
+// echo "ID del evento: " . $eventoId;
 
 if ($eventoId == 0) {
     echo "No se ha seleccionado un evento válido.";
@@ -25,9 +24,10 @@ if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-$sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, 
+$sql = "SELECT alumnos.id AS id_alumno, alumnos.nombre AS nombre_alumno, alumnos.email AS email_alumno, 
                 profesores.nombre AS nombre_profesor, 
-                instituciones.nombre AS nombre_institucion 
+                instituciones.nombre AS nombre_institucion, 
+                alumnos.profesor_id, alumnos.institucion_id, alumnos.nivel_id 
         FROM alumnos 
         INNER JOIN profesores ON alumnos.profesor_id = profesores.id 
         INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id 
@@ -50,6 +50,18 @@ if (!empty($search)) {
 
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Consultar opciones de profesores
+$sqlProfesores = "SELECT id, nombre FROM profesores";
+$resultProfesores = $conn->query($sqlProfesores);
+
+// Consultar opciones de instituciones
+$sqlInstituciones = "SELECT id, nombre FROM instituciones";
+$resultInstituciones = $conn->query($sqlInstituciones);
+
+// Consultar opciones de niveles
+$sqlNiveles = "SELECT id, nivel FROM niveles";
+$resultNiveles = $conn->query($sqlNiveles);
 ?>
 
 <!DOCTYPE html>
@@ -106,8 +118,14 @@ $result = $stmt->get_result();
                             <td><?php echo htmlspecialchars($row['nombre_institucion']); ?></td>
                             <td>
                                 <a href="consultaAlumno.php?id=<?php echo $row['id_alumno']; ?>" class="btn btn-primary btn-sm">Consultar</a>
-                                <a href="actualizarAlumno.php?id=<?php echo $row['id_alumno']; ?>" class="btn btn-warning btn-sm">Actualizar</a>
-                                <button class="btn btn-danger btn-sm">Eliminar</button>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateModal" 
+                                        data-id="<?php echo $row['id_alumno']; ?>"
+                                        data-nombre="<?php echo htmlspecialchars($row['nombre_alumno']); ?>"
+                                        data-email="<?php echo htmlspecialchars($row['email_alumno']); ?>"
+                                        data-profesor="<?php echo $row['profesor_id']; ?>"
+                                        data-institucion="<?php echo $row['institucion_id']; ?>"
+                                        data-nivel="<?php echo $row['nivel_id']; ?>">Actualizar</button>
+                                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminacion(<?php echo $row['id_alumno']; ?>)">Eliminar</button>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -119,15 +137,134 @@ $result = $stmt->get_result();
             </tbody>
         </table>
         <div class="bottom-container">
+            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
             <a href="./inscripcionInstitucion.php" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
             <a href="./inscripcionProfesor.php?certamen_id=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Profesores</a>
-            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
             <a href="./eventos.php" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
         </div>
     </div>
+    <!-- Modal para actualizar datos del alumno -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="updateForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">Actualizar Alumno</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="modalAlumnoId">
+                        <div class="mb-3">
+                            <label for="modalNombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="modalNombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="modalEmail" name="email" placeholder="Deja en blanco si no deseas cambiarlo">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalProfesor" class="form-label">Profesor</label>
+                            <select class="form-select" id="modalProfesor" name="profesor_id" required>
+                                <?php while($rowProfesor = $resultProfesores->fetch_assoc()): ?>
+                                    <option value="<?php echo $rowProfesor['id']; ?>"><?php echo htmlspecialchars($rowProfesor['nombre']); ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalInstitucion" class="form-label">Institución</label>
+                            <select class="form-select" id="modalInstitucion" name="institucion_id" required>
+                                <?php while($rowInstitucion = $resultInstituciones->fetch_assoc()): ?>
+                                    <option value="<?php echo $rowInstitucion['id']; ?>"><?php echo htmlspecialchars($rowInstitucion['nombre']); ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalNivel" class="form-label">Nivel</label>
+                            <select class="form-select" id="modalNivel" name="nivel_id" required>
+                                <?php while($rowNivel = $resultNiveles->fetch_assoc()): ?>
+                                    <option value="<?php echo $rowNivel['id']; ?>"><?php echo htmlspecialchars($rowNivel['nivel']); ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+                                
+    <script>
+        var updateModal = document.getElementById('updateModal');
+        updateModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Botón que disparó el modal
+            var id = button.getAttribute('data-id');
+            var nombre = button.getAttribute('data-nombre');
+            var email = button.getAttribute('data-email');
+            var profesor = button.getAttribute('data-profesor');
+            var institucion = button.getAttribute('data-institucion');
+            var nivel = button.getAttribute('data-nivel');
+        
+            document.getElementById('modalAlumnoId').value = id;
+            document.getElementById('modalNombre').value = nombre;
+            document.getElementById('modalEmail').value = email;
+            document.getElementById('modalProfesor').value = profesor;
+            document.getElementById('modalInstitucion').value = institucion;
+            document.getElementById('modalNivel').value = nivel;
+        });
+    
+        function confirmarEliminacion(idAlumno) {
+            if (confirm('¿Estás seguro de que deseas eliminar a este alumno?')) {
+                // Si el usuario confirma, enviar solicitud para eliminar
+                fetch('eliminarAlumno.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: idAlumno })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Alumno eliminado correctamente');
+                        location.reload(); // Recargar la página para reflejar los cambios
+                    } else {
+                        alert('Error al eliminar: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
 
-    <!-- Bootstrap JS (opcional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        // Manejar el envío del formulario con AJAX
+        document.getElementById('updateForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evitar el envío del formulario por defecto
+        
+            var formData = new FormData(this);
+        
+            fetch('actualizarAlumno.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // if (data.success) {
+                //     alert('Datos actualizados correctamente');
+                //     location.reload(); // Recargar la página para reflejar los cambios
+                // } else {
+                //     alert('Error al actualizar: ' + data.message);
+                // }
+                alert(data.message);
+                window.location.reload(); 
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
 

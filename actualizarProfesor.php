@@ -14,8 +14,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("ID del profesor no especificado.");
 }
 
-$profesorId = intval($_GET['id']); // Convertir a entero
-echo "ID del profesor recibido: " . htmlspecialchars($profesorId) . "<br>";
+$profesorId = intval($_GET['id']);
 
 // Consultar datos actuales del profesor
 $sqlProfesor = "SELECT * FROM profesores WHERE id = ?";
@@ -111,7 +110,7 @@ $conn->close();
                 <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($profesor['nombre']); ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            <a href="inscripcionProfesor.php" class="btn btn-secondary">Regresar</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Regresar</a>
         </form>
     </div>
 

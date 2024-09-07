@@ -83,7 +83,7 @@ $conn->close();
                 <p class="card-text"><strong>Profesor:</strong> <?php echo htmlspecialchars($alumno['nombre_profesor']); ?></p>
                 <p class="card-text"><strong>Institución:</strong> <?php echo htmlspecialchars($alumno['nombre_institucion']); ?></p>
                 <p class="card-text"><strong>Nivel:</strong> <?php echo htmlspecialchars($alumno['nombre_nivel']); ?></p>
-                <a href="inscripcionAlumno.php" class="btn btn-secondary">Regresar</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">Regresar</a>
             </div>
         </div>
     </div>

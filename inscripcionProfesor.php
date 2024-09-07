@@ -85,6 +85,7 @@ $result = $stmt->get_result();
         .table tbody td {
             border: 1px solid black;
         }
+        .bottom-container { width: fit-content; margin: 0 auto; }
     </style>
 </head>
 <body>
@@ -131,7 +132,12 @@ $result = $stmt->get_result();
             </tbody>
         </table>
     </div>
-
+    <div class="bottom-container">
+            <a href="./inscripcionInstitucion?certamen_id=<?php echo $certamenId?>.php" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
+            <a href="./inscripcionAlumno.php?certamen_id=<?php echo $certamenId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a>
+            <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
+            <a href="./eventos.ph?certamen_id=<?php echo $certamenId?>p" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
+        </div>
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -8,8 +8,8 @@ if (!isset($_SESSION['current_index'])) {
 }
 $currentIndex = $_SESSION['current_index'];
 
-// $certamen = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
-$certamen = 1;
+$certamen = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
+// $certamen = 1;
 $sql = "SELECT 
             pe.id AS performance_id, 
             ce.nombre AS concurso, 
