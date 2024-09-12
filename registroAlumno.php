@@ -9,17 +9,22 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+// echo "ID del evento: " . $eventoId;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Consultar opciones de profesores
-$sqlProfesores = "SELECT id, nombre FROM profesores";
+$sqlProfesores = "SELECT id_profesor, nombre FROM profesores";
 $resultProfesores = $conn->query($sqlProfesores);
 
 // Consultar opciones de instituciones
-$sqlInstituciones = "SELECT id, nombre FROM instituciones";
+$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones";
 $resultInstituciones = $conn->query($sqlInstituciones);
-
-// Consultar opciones de niveles
-$sqlNiveles = "SELECT id, nivel FROM niveles";
-$resultNiveles = $conn->query($sqlNiveles);
 
 // Registrar nuevo alumno
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -29,12 +34,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $institucion_id = $_POST['institucion_id'];
     $nivel_id = $_POST['nivel_id'];
 
-    $sqlInsert = "INSERT INTO alumnos (nombre, email, profesor_id, institucion_id, nivel_id) VALUES (?, ?, ?, ?, ?)";
+    // Preparar la consulta para insertar el nuevo alumno
+    $sqlInsert = "INSERT INTO alumnos (nombre, email, id_profesor, id_institucion, nivel) VALUES (?, ?, ?, ?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
     $stmtInsert->bind_param("ssiii", $nombre, $email, $profesor_id, $institucion_id, $nivel_id);
-    
+
     if ($stmtInsert->execute()) {
-        echo "<div class='alert alert-success text-center'>Alumno registrado correctamente</div>";
+        // Obtener el ID del alumno recién insertado
+        $alumnoId = $stmtInsert->insert_id;
+
+        // Insertar en la tabla participante
+        $sqlInsert2 = "INSERT INTO participantes (id_alumno, id_evento, nivel) VALUES (?, ?, ?)";
+        $stmtInsert2 = $conn->prepare($sqlInsert2);
+        $stmtInsert2->bind_param("iis", $alumnoId, $eventoId, $nivel_id);
+
+        if ($stmtInsert2->execute()) {
+            echo "<div class='alert alert-success text-center'>Alumno registrado correctamente</div>";
+        } else {
+            echo "<div class='alert alert-danger text-center'>Error al registrar en la tabla participante: " . $conn->error . "</div>";
+        }
+
+        $stmtInsert2->close();
     } else {
         echo "<div class='alert alert-danger text-center'>Error al registrar el alumno: " . $conn->error . "</div>";
     }
@@ -44,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -64,6 +85,7 @@ $conn->close();
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .container {
             max-width: 500px;
@@ -103,7 +125,7 @@ $conn->close();
                 <label for="profesor_id" class="form-label">Profesor</label>
                 <select class="form-select" id="profesor_id" name="profesor_id" required>
                     <?php while($rowProfesor = $resultProfesores->fetch_assoc()): ?>
-                        <option value="<?php echo $rowProfesor['id']; ?>"><?php echo htmlspecialchars($rowProfesor['nombre']); ?></option>
+                        <option value="<?php echo $rowProfesor['id_profesor']; ?>"><?php echo htmlspecialchars($rowProfesor['nombre']); ?></option>
                     <?php endwhile; ?>
                 </select>
             </div>
@@ -111,23 +133,22 @@ $conn->close();
                 <label for="institucion_id" class="form-label">Institución</label>
                 <select class="form-select" id="institucion_id" name="institucion_id" required>
                     <?php while($rowInstitucion = $resultInstituciones->fetch_assoc()): ?>
-                        <option value="<?php echo $rowInstitucion['id']; ?>"><?php echo htmlspecialchars($rowInstitucion['nombre']); ?></option>
+                        <option value="<?php echo $rowInstitucion['id_institucion']; ?>"><?php echo htmlspecialchars($rowInstitucion['nombre']); ?></option>
                     <?php endwhile; ?>
                 </select>
             </div>
             <div class="mb-3">
                 <label for="nivel_id" class="form-label">Nivel</label>
                 <select class="form-select" id="nivel_id" name="nivel_id" required>
-                    <?php while($rowNivel = $resultNiveles->fetch_assoc()): ?>
-                        <option value="<?php echo $rowNivel['id']; ?>"><?php echo htmlspecialchars($rowNivel['nivel']); ?></option>
-                    <?php endwhile; ?>
+                    <option value="1">Nivel 1</option>
+                    <option value="2">Nivel 2</option>
+                    <option value="3">Nivel 3</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary btn-custom">Registrar Alumno</button>
-            <a href="inscripcionAlumno.php" class="btn btn-secondary btn-custom">Regresar</a>
+            <a href="inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn btn-secondary btn-custom">Regresar</a>
         </form>
     </div>
-
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

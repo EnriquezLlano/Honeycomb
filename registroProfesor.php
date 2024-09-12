@@ -9,13 +9,28 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+echo "ID del evento: " . $eventoId;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+// Consultar opciones de instituciones
+$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones";
+$resultInstituciones = $conn->query($sqlInstituciones);
+
 // Insertar datos del profesor
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $institucionId = $_POST['institucion_id'];
 
-    $sqlInsert = "INSERT INTO profesores (nombre) VALUES (?)";
+    // Cambiar $id_evento a $eventoId
+    $sqlInsert = "INSERT INTO profesores (nombre, email, id_institucion) VALUES (?, ?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
-    $stmtInsert->bind_param("s", $nombre);
+    $stmtInsert->bind_param("ssi", $nombre, $email, $institucionId);
 
     if ($stmtInsert->execute()) {
         echo "<div class='alert alert-success text-center'>Profesor registrado correctamente</div>";
@@ -25,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmtInsert->close();
 }
+
 
 $conn->close();
 ?>
@@ -73,8 +89,20 @@ $conn->close();
                 <label for="nombre" class="form-label">Nombre Completo</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Correo Electronico</label>
+                <input type="text" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="institucion_id" class="form-label">Institución</label>
+                <select class="form-select" id="institucion_id" name="institucion_id" required>
+                    <?php while($rowInstitucion = $resultInstituciones->fetch_assoc()): ?>
+                        <option value="<?php echo $rowInstitucion['id_institucion']; ?>"><?php echo htmlspecialchars($rowInstitucion['nombre']); ?></option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary btn-custom">Registrar Profesor</button>
-            <a href="inscripcionProfesor.php" class="btn btn-secondary btn-custom">Regresar</a>
+            <a href="inscripcionProfesor.php?id_evento=<?php echo $eventoId?>.php" class="btn btn-secondary btn-custom">Regresar</a>
         </form>
     </div>
 

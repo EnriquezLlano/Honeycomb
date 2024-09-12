@@ -12,12 +12,13 @@ if ($conn->connect_error) {
 // Obtener los datos del cuerpo de la solicitud
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (isset($data['id_alumno'])) {
-    $idAlumno = intval($data['id_alumno']);
+// Verificar si el ID del alumno está presente
+if (isset($data['id_profesor'])) {
+    $id_profesor = intval($data['id_profesor']);
 
     // Preparar y ejecutar la consulta para eliminar el alumno de la tabla 'performance'
-    $stmt = $conn->prepare("DELETE FROM participantes WHERE id_alumno = ?");
-    $stmt->bind_param("i", $idAlumno);
+    $stmt = $conn->prepare("DELETE FROM profesores WHERE id_profesor = ?");
+    $stmt->bind_param("i", $id_profesor);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "message" => "Alumno eliminado correctamente"]);
@@ -27,7 +28,7 @@ if (isset($data['id_alumno'])) {
 
     $stmt->close();
 } else {
-    echo json_encode(["success" => false, "message" => "ID de alumno no proporcionado"]);
+    echo json_encode(["success" => false, "message" => "ID del profesor no proporcionado"]);
 }
 
 $conn->close();

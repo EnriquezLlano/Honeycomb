@@ -13,12 +13,11 @@ if ($conn->connect_error) {
 $alumnoId = $_GET['id'];
 
 // Consulta SQL con INNER JOIN para obtener los datos
-$sql = "SELECT alumnos.nombre AS nombre_alumno, alumnos.email, profesores.nombre AS nombre_profesor, instituciones.nombre AS nombre_institucion, niveles.nivel AS nombre_nivel 
+$sql = "SELECT alumnos.nombre AS nombre_alumno, alumnos.email, profesores.nombre AS nombre_profesor, instituciones.nombre AS nombre_institucion, alumnos.nivel AS nivel 
         FROM alumnos 
-        INNER JOIN profesores ON alumnos.profesor_id = profesores.id 
-        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id 
-        INNER JOIN niveles ON alumnos.nivel_id = niveles.id 
-        WHERE alumnos.id = ?";
+        INNER JOIN profesores ON alumnos.id_profesor = profesores.id_profesor
+        INNER JOIN instituciones ON alumnos.id_institucion = instituciones.id_institucion
+        WHERE alumnos.id_alumno = ?";
 
 $stmt = $conn->prepare($sql);
 
@@ -82,7 +81,7 @@ $conn->close();
                 <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($alumno['email']); ?></p>
                 <p class="card-text"><strong>Profesor:</strong> <?php echo htmlspecialchars($alumno['nombre_profesor']); ?></p>
                 <p class="card-text"><strong>Institución:</strong> <?php echo htmlspecialchars($alumno['nombre_institucion']); ?></p>
-                <p class="card-text"><strong>Nivel:</strong> <?php echo htmlspecialchars($alumno['nombre_nivel']); ?></p>
+                <p class="card-text"><strong>Nivel:</strong> <?php echo htmlspecialchars($alumno['nivel']); ?></p>
                 <a href="javascript:history.back()" class="btn btn-secondary">Regresar</a>
             </div>
         </div>

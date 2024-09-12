@@ -9,11 +9,18 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Obtener el ID de la institución a actualizar
-$institucionId = $_GET['id'];
+$institucionId = $_GET['id_institucion'];
 
 // Consultar datos actuales de la institución
-$sqlInstitucion = "SELECT * FROM instituciones WHERE id = ?";
+$sqlInstitucion = "SELECT * FROM instituciones WHERE id_institucion = ?";
 $stmtInstitucion = $conn->prepare($sqlInstitucion);
 $stmtInstitucion->bind_param("i", $institucionId);
 $stmtInstitucion->execute();
@@ -24,7 +31,7 @@ $institucion = $resultInstitucion->fetch_assoc();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
 
-    $sqlUpdate = "UPDATE instituciones SET nombre = ? WHERE id = ?";
+    $sqlUpdate = "UPDATE instituciones SET nombre = ? WHERE id_institucion = ?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
     $stmtUpdate->bind_param("si", $nombre, $institucionId);
     
@@ -76,7 +83,7 @@ $conn->close();
                 <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($institucion['nombre']); ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            <a href="inscripcionInstitucion.php" class="btn btn-secondary">Regresar</a>
+            <a href="inscripcionInstitucion.php?id_evento=<?php echo $eventoId?>" class="btn btn-secondary">Regresar</a>
         </form>
     </div>
 

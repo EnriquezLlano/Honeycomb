@@ -9,11 +9,18 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Obtener el ID de la institución para consultar los datos
-$institucionId = $_GET['id'];
+$institucionId = $_GET['id_institucion'];
 
 // Consulta SQL para obtener los datos de la institución
-$sql = "SELECT nombre FROM instituciones WHERE id = ?";
+$sql = "SELECT nombre FROM instituciones WHERE id_institucion = ?";
 
 $stmt = $conn->prepare($sql);
 
@@ -69,7 +76,7 @@ $institucion = $result->fetch_assoc();
             <div class="card-body">
                 <h5 class="card-title">Nombre de la Institución:</h5>
                 <p class="card-text"><?php echo htmlspecialchars($institucion['nombre']); ?></p>
-                <a href="inscripcionInstitucion.php" class="btn btn-secondary">Regresar</a>
+                <a href="inscripcionInstitucion.php?id_evento=<?php echo $eventoId?>" class="btn btn-secondary">Regresar</a>
             </div>
         </div>
     </div>

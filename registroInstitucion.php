@@ -9,13 +9,22 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+// echo "ID del evento: " . $eventoId;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Insertar datos de la institución
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
 
-    $sqlInsert = "INSERT INTO instituciones (nombre) VALUES (?)";
+    $sqlInsert = "INSERT INTO instituciones (nombre, id_evento) VALUES (?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
-    $stmtInsert->bind_param("s", $nombre);
+    $stmtInsert->bind_param("si", $nombre, $eventoId);
 
     if ($stmtInsert->execute()) {
         echo "<div class='alert alert-success text-center'>Institución registrada correctamente</div>";
@@ -80,7 +89,7 @@ $conn->close();
                 <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
             <button type="submit" class="btn btn-primary btn-custom">Registrar Institución</button>
-            <a href="inscripcionInstitucion.php" class="btn btn-secondary btn-custom">Regresar</a>
+            <a href="inscripcionInstitucion.php?id_evento=<?php echo $eventoId; ?>" class="btn btn-secondary btn-custom">Regresar</a>
         </form>
     </div>
 

@@ -1,8 +1,16 @@
 <?php
 require './conexion.php';
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $certamen_id = $_POST['id_evento'];
+    $_SESSION['id_evento'] = $certamen_id;
+    header("Location: registrarAlumno.php");
+    exit();
+}
 
 // Consultar nombres de certámenes
-$sql = "SELECT id, nombre FROM certamenes ORDER BY id DESC";
+$sql = "SELECT id_evento, nombre_evento FROM eventos ORDER BY id_evento DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -53,8 +61,8 @@ $result = $conn->query($sql);
         <div class="eventos-container">
             <?php if ($result->num_rows > 0): ?>
                 <?php while($row = $result->fetch_assoc()): ?>
-                    <button id="evento-<?php echo $row['id']; ?>" data-id="<?php echo $row['id']; ?>" class="btn btn-primary btn-evento">
-                        <?php echo htmlspecialchars($row['nombre']); ?>
+                    <button id="evento-<?php echo $row['id_evento']; ?>" data-id="<?php echo $row['id_evento']; ?>" class="btn btn-primary btn-evento">
+                        <?php echo htmlspecialchars($row['nombre_evento']); ?>
                     </button>
                 <?php endwhile; ?>
             <?php else: ?>
@@ -80,7 +88,7 @@ $result = $conn->query($sql);
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nombreEvento" class="form-label">Nombre del Evento</label>
-                            <input type="text" class="form-control" id="nombreEvento" name="nombre" required>
+                            <input type="text" class="form-control" id="nombreEvento" name="nombre_evento" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -109,6 +117,9 @@ $result = $conn->query($sql);
                 // Guardar el ID del evento seleccionado
                 selectedEventId = button.getAttribute('data-id');
 
+                // Guardar en localStorage
+                localStorage.setItem('id_evento', selectedEventId);
+
                 // Habilitar botones de eliminar y inscripción
                 document.getElementById('btnEliminar').disabled = false;
                 document.getElementById('btnInscripcion').disabled = false;
@@ -118,7 +129,7 @@ $result = $conn->query($sql);
             button.addEventListener('dblclick', () => {
                 if (selectedEventId) {
                     // Redirigir con el ID seleccionado
-                    window.location.href = `inscripcionAlumno.php?certamen_id=${selectedEventId}`;
+                    window.location.href = `inscripcionAlumno.php?id_evento=${selectedEventId}`;
                 }
             });
         });
@@ -134,7 +145,7 @@ $result = $conn->query($sql);
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: `id=${selectedEventId}`
+                        body: `id_evento=${selectedEventId}`
                     })
                     .then(response => response.text())
                     .then(data => {
@@ -154,8 +165,9 @@ $result = $conn->query($sql);
         // Manejo del botón de inscripción
         document.getElementById('btnInscripcion').addEventListener('click', () => {
             if (selectedEventId) {
+                localStorage.setItem('id_evento', selectedEventId);
                 // Redirigir con el ID seleccionado
-                window.location.href = `inscripcionAlumno.php?certamen_id=${selectedEventId}`;
+                window.location.href = `inscripcionAlumno.php?id_evento=${selectedEventId}`;
             } else {
                 alert('Por favor, selecciona un evento para inscribir.');
             }

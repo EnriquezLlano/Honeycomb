@@ -1,34 +1,29 @@
 <?php
 require './conexion.php';
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+// Verificar si se ha proporcionado un ID de evento válido
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
+
 // Inicializar variables
 $search = "";
-$certamenId = "";
 
 // Recuperar valores enviados por GET en lugar de POST
 if (isset($_GET['search'])) {
     $search = $_GET['search'];
 }
 
-if (isset($_GET['certamen_id'])) {
-    $certamenId = $_GET['certamen_id'];
-}
-
-// Verificar si el ID del certamen está presente
-if (empty($certamenId)) {
-    die("Certamen no especificado.");
-}
-
-// Consulta SQL con INNER JOIN para obtener los datos y filtrar por certamen
-$sql = "SELECT profesores.id AS id_profesor, 
+// Consulta SQL con INNER JOIN para obtener los datos y filtrar por evento
+$sql = "SELECT profesores.id_profesor AS id_profesor, 
                profesores.nombre AS nombre_profesor, 
                instituciones.nombre AS nombre_institucion 
         FROM profesores 
-        INNER JOIN alumnos ON alumnos.profesor_id = profesores.id
-        INNER JOIN instituciones ON alumnos.institucion_id = instituciones.id
-        INNER JOIN certamenes ON alumnos.certamen_id = certamenes.id
-        WHERE certamenes.id = ?";
-
+        INNER JOIN instituciones ON instituciones.id_institucion = profesores.id_institucion 
+        WHERE instituciones.id_evento = ?";
 if (!empty($search)) {
     $sql .= " AND profesores.nombre LIKE ?";
 }
@@ -38,9 +33,9 @@ $stmt = $conn->prepare($sql);
 // Configurar los parámetros de la consulta
 if (!empty($search)) {
     $searchTerm = "%" . $search . "%";
-    $stmt->bind_param("is", $certamenId, $searchTerm);
+    $stmt->bind_param("is", $eventoId, $searchTerm);
 } else {
-    $stmt->bind_param("i", $certamenId);
+    $stmt->bind_param("i", $eventoId);
 }
 
 $stmt->execute();
@@ -97,11 +92,11 @@ $result = $stmt->get_result();
             <form method="GET" action="">
                 <div class="input-group">
                     <input type="text" class="form-control" name="search" placeholder="Buscar profesor" value="<?php echo htmlspecialchars($search); ?>">
-                    <input type="hidden" name="certamen_id" value="<?php echo htmlspecialchars($certamenId); ?>">
+                    <input type="hidden" name="id_evento" value="<?php echo htmlspecialchars($eventoId); ?>">
                     <button class="btn btn-custom" type="submit">Buscar</button>
                 </div>
             </form>
-            <a href="registroProfesor.php" class="btn btn-primary ms-3">Registrar Profesor</a>
+            <a href="registroProfesor.php?id_evento=<?php echo $eventoId?>" class="btn btn-primary ms-3">Registrar Profesor</a>
         </div>
         <table class="table table-bordered">
             <thead class="thead-dark">
@@ -118,9 +113,9 @@ $result = $stmt->get_result();
                             <td><?php echo htmlspecialchars($row['nombre_profesor']); ?></td>
                             <td><?php echo htmlspecialchars($row['nombre_institucion']); ?></td>
                             <td>
-                                <a href="consultarProfesor.php?id=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-primary btn-sm">Consultar</a>
-                                <a href="actualizarProfesor.php?id=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-warning btn-sm">Actualizar</a>
-                                <button class="btn btn-danger btn-sm">Eliminar</button>
+                                <a href="consultarProfesor.php?id_evento=<?php echo $eventoId?>&id_profesor=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-primary btn-sm">Consultar</a>
+                                <a href="actualizarProfesor.php?id_evento=<?php echo $eventoId?>&id_profesor=<?php echo htmlspecialchars($row['id_profesor']); ?>" class="btn btn-warning btn-sm">Actualizar</a>
+                                <button class="btn btn-danger btn-sm" onclick="confirmarEliminacion(<?php echo htmlspecialchars($row['id_profesor']); ?>)">Eliminar</button>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -133,13 +128,35 @@ $result = $stmt->get_result();
         </table>
     </div>
     <div class="bottom-container">
-            <a href="./inscripcionInstitucion?certamen_id=<?php echo $certamenId?>.php" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
-            <a href="./inscripcionAlumno.php?certamen_id=<?php echo $certamenId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a>
+            <a href="./inscripcionInstitucion.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
+            <a href="./inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a>
             <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
-            <a href="./eventos.ph?certamen_id=<?php echo $certamenId?>p" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
+            <a href="./eventos.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
         </div>
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmarEliminacion(id_profesor) {
+            if (confirm('¿Estás seguro de que deseas eliminar a este referente?')) {
+                fetch('eliminarProfesor.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id_profesor: id_profesor })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error al eliminar: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
 </body>
 </html>
 

@@ -10,14 +10,14 @@ if ($conn->connect_error) {
 }
 
 // Validar que el ID del profesor esté presente en la URL
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+if (!isset($_GET['id_profesor']) || empty($_GET['id_profesor'])) {
     die("ID del profesor no especificado.");
 }
 
-$profesorId = intval($_GET['id']);
+$profesorId = intval($_GET['id_profesor']);
 
 // Consultar datos actuales del profesor
-$sqlProfesor = "SELECT * FROM profesores WHERE id = ?";
+$sqlProfesor = "SELECT * FROM profesores WHERE id_profesor = ?";
 $stmtProfesor = $conn->prepare($sqlProfesor);
 
 if (!$stmtProfesor) {
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
 
     // Preparar la consulta de actualización
-    $sqlUpdate = "UPDATE profesores SET nombre = ? WHERE id = ?";
+    $sqlUpdate = "UPDATE profesores SET nombre = ? WHERE id_profesor = ?";
     $stmtUpdate = $conn->prepare($sqlUpdate);
 
     if (!$stmtUpdate) {

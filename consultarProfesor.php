@@ -9,11 +9,19 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+// echo "ID del evento: " . $eventoId;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+}
+
 // Obtener el ID del profesor para consultar los datos
-$profesorId = $_GET['id'];
+$profesorId = $_GET['id_profesor'];
 
 // Consulta SQL para obtener los datos del profesor
-$sql = "SELECT nombre FROM profesores WHERE id = ?";
+$sql = "SELECT nombre FROM profesores WHERE id_profesor = ?";
 
 $stmt = $conn->prepare($sql);
 
@@ -44,7 +52,7 @@ $profesor = $result->fetch_assoc();
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Nombre del Profesor: <?php echo htmlspecialchars($profesor['nombre']); ?></h5>
-                <a href="inscripcionProfesor.php" class="btn btn-secondary">Regresar</a>
+                <a href="inscripcionProfesor.php?id_evento=<?php echo $eventoId?>.php" class="btn btn-secondary">Regresar</a>
             </div>
         </div>
     </div>
