@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function descalificarParticipante($id) {
     global $conn; // Usa la conexión global a la base de datos
 
-    $sql = "UPDATE performance SET descalificados = TRUE WHERE id = ?";
+    $sql = "UPDATE participantes SET fallo = TRUE WHERE id_participante = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 

@@ -131,7 +131,7 @@ $result = $stmt->get_result();
             <a href="./inscripcionInstitucion.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Instituciones</a>
             <a href="./inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a>
             <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
-            <a href="./eventos.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
+            <!-- <a href="./eventos.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a> -->
         </div>
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 
 $eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
 
-echo "ID del evento: " . $eventoId;
+// echo "ID del evento: " . $eventoId;
 
 if ($eventoId == 0) {
     echo "No se ha seleccionado un evento válido.";

@@ -22,7 +22,6 @@ if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-// Consulta SQL modificada para agrupar profesores y alumnos por institución
 $sql = "SELECT instituciones.id_institucion AS id_institucion, 
                instituciones.nombre AS nombre_institucion, 
                GROUP_CONCAT(DISTINCT profesores.nombre SEPARATOR ', ') AS nombre_profesores, 
@@ -31,13 +30,11 @@ $sql = "SELECT instituciones.id_institucion AS id_institucion,
         LEFT JOIN profesores ON profesores.id_institucion = instituciones.id_institucion
         LEFT JOIN alumnos ON alumnos.id_institucion = instituciones.id_institucion
         WHERE instituciones.id_evento = ?";
-
 if (!empty($search)) {
     $sql .= " AND instituciones.nombre LIKE ?";
 }
 
 $sql .= " GROUP BY instituciones.id_institucion";
-
 $stmt = $conn->prepare($sql);
 
 if (!empty($search)) {
@@ -138,10 +135,10 @@ $result = $stmt->get_result();
         </table>
     </div>
     <div class="bottom-container">
-        <a href="./inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a>
+        <!-- <a href="./inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Alumnos</a> -->
         <a href="./inscripcionProfesor.php?id_evento=<?php echo $eventoId ?>" class="btn-bottom btn btn-primary ms-3">Profesores</a>
         <a href="./eventosRegistrados.php" class="btn-bottom btn btn-primary ms-3">Eventos Registrados</a>
-        <a href="./eventos?id_evento=<?php echo $eventoId?>.php" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a>
+        <!-- <a href="./eventos?id_evento=<?php echo $eventoId?>.php" class="btn-bottom btn btn-primary ms-3">Ir al cronómetro</a> -->
     </div>
     <!-- Bootstrap JS (opcional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

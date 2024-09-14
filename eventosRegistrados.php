@@ -72,7 +72,7 @@ $result = $conn->query($sql);
         <div class="btn-container">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarEventoModal">Agregar Evento</button>
             <button id="btnEliminar" class="btn btn-danger" disabled>Eliminar Evento</button>
-            <button id="btnInscripcion" class="btn btn-primary" disabled>Ir a Inscripción</button>
+            <button id="btnInscripcion" class="btn btn-primary" disabled>Ir al Evento</button>
         </div>
     </div>
 
@@ -167,7 +167,8 @@ $result = $conn->query($sql);
             if (selectedEventId) {
                 localStorage.setItem('id_evento', selectedEventId);
                 // Redirigir con el ID seleccionado
-                window.location.href = `inscripcionAlumno.php?id_evento=${selectedEventId}`;
+                // window.location.href = `setup.php?id_evento=${selectedEventId}`;
+                window.location.href = `inscripcioninstitucion.php?id_evento=${selectedEventId}`;
             } else {
                 alert('Por favor, selecciona un evento para inscribir.');
             }

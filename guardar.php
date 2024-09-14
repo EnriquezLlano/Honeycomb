@@ -12,20 +12,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
-    if (json_last_error() === JSON_ERROR_NONE && isset($data['performance_id']) && isset($data['tiempo_deletreo']) && isset($data['penalizacion_deletreo'])) {
-        $performance_id = $data['performance_id'];
+    if (json_last_error() === JSON_ERROR_NONE && isset($data['id_participante']) && isset($data['tiempo_deletreo']) && isset($data['penalizacion_deletreo'])) {
+        $id_participante = $data['id_participante'];
         $tiempo_deletreo = $data['tiempo_deletreo'];
         $penalizacion_deletreo = $data['penalizacion_deletreo'];
 
         // Preparar la consulta para actualizar los datos del participante
-        $sql_update = "UPDATE performance SET tiempo_deletreo = ?, penalizacion_deletreo = ? WHERE id = ?";
+        $sql_update = "UPDATE participantes SET tiempo_deletreo = ?, penalizacion_deletreo = ? WHERE id_participante = ?";
         $stmt = $conn->prepare($sql_update);
         if ($stmt === false) {
             echo json_encode(['success' => false, 'error' => 'Error al preparar la consulta: ' . $conn->error]);
             exit();
         }
 
-        $stmt->bind_param('ssi', $tiempo_deletreo, $penalizacion_deletreo, $performance_id);
+        $stmt->bind_param('ssi', $tiempo_deletreo, $penalizacion_deletreo, $id_participante);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {

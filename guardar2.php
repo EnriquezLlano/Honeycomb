@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
-    if (json_last_error() === JSON_ERROR_NONE && isset($data['performance_id']) && isset($data['tiempo_oracion']) && isset($data['penalizacion_oracion'])) {
-        $performance_id = $data['performance_id'];
+    if (json_last_error() === JSON_ERROR_NONE && isset($data['id_participante']) && isset($data['tiempo_oracion']) && isset($data['penalizacion_oracion'])) {
+        $id_participante = $data['id_participante'];
         $tiempo_oracion = $data['tiempo_oracion'];
         $penalizacion_oracion = $data['penalizacion_oracion'];
 
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Cambiar el tipo de parámetro para coincidir con los datos
-        $stmt->bind_param('sii', $tiempo_oracion, $penalizacion_oracion, $performance_id);
+        $stmt->bind_param('sii', $tiempo_oracion, $penalizacion_oracion, $id_participante);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {

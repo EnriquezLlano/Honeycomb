@@ -27,7 +27,23 @@ body {
 .header-title {
   display: none;
 }
-.button_login {
+.button_index {
+  text-decoration: none;
+  background-color: transparent;
+  border: solid 2px #fb0;
+  border-radius: 10px;
+  border: none;
+  height: fit-content;
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+.button_instances{
   text-decoration: none;
   background-color: transparent;
   border: solid 2px #fb0;
@@ -43,7 +59,7 @@ body {
   right: 10px;
   cursor: pointer;
 }
-.button_login:hover {
+.button_index:hover, .button_instances:hover {
   /* transition: ; */
   background-color: #fb0;
   border: solid 2px #212121;

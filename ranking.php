@@ -5,15 +5,19 @@ session_start();
 // Obtener los parámetros del nivel y la instancia
 $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "N/A";
 $instanciaActual = isset($_GET['instancia']) ? $_GET['instancia'] : "N/A";
-
+$evento = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+// echo $evento;
+if ($evento == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
 // Consulta SQL para obtener el ranking de la performance del nivel y la instancia
-$sql = "SELECT pe.id AS performance_id, i.nombre AS institucion, a.nombre AS alumno, pe.tiempo_deletreo AS tiempo_final, pe.tiempo_oracion AS tiempo_oracion, pe.penalizacion_deletreo AS penalizaciones, pe.descalificados AS descalificado
-        FROM performance pe
-        JOIN alumnos a ON pe.alumno_id = a.id
-        JOIN instituciones i ON a.institucion_id = i.id
-        JOIN instancias ins ON pe.instancia_id = ins.id
-        WHERE a.nivel_id = '$nivel' AND ins.id = '$instanciaActual'
-        ORDER BY descalificado ASC, tiempo_final ASC";
+$sql = "SELECT pa.id_participante AS id_participante, i.nombre AS institucion, a.nombre AS alumno, pa.tiempo_deletreo AS tiempo_deletreo, pa.tiempo_oracion AS tiempo_oracion, pa.penalizacion_deletreo AS penalizaciones, pa.fallo AS descalificado
+        FROM participantes pa
+        JOIN alumnos a ON pa.id_alumno = a.id_alumno
+        JOIN instituciones i ON a.id_institucion = i.id_institucion
+        WHERE pa.id_evento = $evento AND pa.nivel = '$nivel' AND pa.instancia_alcanzada = '$instanciaActual'
+        ORDER BY descalificado ASC, tiempo_deletreo ASC";
 $result = $conn->query($sql);
 
 // Cerrar la conexión
@@ -33,7 +37,7 @@ $conn->close();
 <body>
 
 <div class="container centered-text">
-    <h4 class="h4">Escuela Técnica "Carmen Molina de Llano"</h4>
+    <!-- <h4 class="h4">Escuela Técnica "Carmen Molina de Llano"</h4> -->
     <div>
         <div class="info_ranking">
             <strong>Instancia:</strong> <span class="large-text"><?php echo $instanciaActual; ?></span>
@@ -70,7 +74,7 @@ $conn->close();
                         echo '<td>' . $puesto . '</td>';
                         echo '<td>' . $row['institucion'] . '</td>';
                         echo '<td>' . $row['alumno'] . '</td>';
-                        echo '<td>' . $row['tiempo_final'] . '</td>';
+                        echo '<td>' . $row['tiempo_deletreo'] . '</td>';
                         if ($nivel == 3) {
                             echo '<td>' . $row['tiempo_oracion'] . '</td>';
                         };
@@ -92,7 +96,7 @@ $conn->close();
 </div>
 
 <div class="container button-container">
-    <button id="backToEvents" class="btn" onclick="window.location.href='eventos.php';">Volver a Eventos</button>
+    <button id="backToEvents" class="btn" onclick="window.location.href='javascript:history.back()';">Volver a Eventos</button>
     <button id="printToExcel" class="btn" onclick="exportToExcel();">Imprimir</button>
 </div>
 

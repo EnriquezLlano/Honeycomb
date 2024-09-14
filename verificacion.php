@@ -6,7 +6,12 @@ require './conexion.php';
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
-
+$evento = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+// echo $evento;
+if ($evento == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
 // Manejo de solicitud POST para guardar instancias o actualizar el tiempo
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -14,35 +19,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($data['selected'])) {
         $selectedIds = $data['selected'];
 
-        foreach ($selectedIds as $performance_id) {
-            // Obtener los datos actuales de la fila seleccionada
-            $query = "SELECT * FROM performance WHERE id = ?";
+        foreach ($selectedIds as $id_participante) {
+            $query = "SELECT * FROM participantes WHERE id_participante = ?";
             $stmt = $conn->prepare($query);
-            $stmt->bind_param("i", $performance_id);
+            $stmt->bind_param("i", $id_participante);
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
 
             if ($row) {
-                // Insertar una nueva fila con la instancia incrementada
-                $new_instance = $row['instancia_id'] + 1; // Aumentar la instancia
+                $new_instance = $row['instancia_alcanzada'] + 1;
                 $resetedTime = '00:00';
-                $query = "INSERT INTO performance (alumno_id, nivel_id, instancia_id, tiempo_deletreo, penalizacion_deletreo) VALUES (?, ?, ?, ?, ?)";
+                $query = "INSERT INTO participantes (id_alumno, id_evento, nivel, instancia_alcanzada, tiempo_deletreo, penalizacion_deletreo) VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
-                $stmt->bind_param("iiiss", $row['alumno_id'], $row['nivel_id'], $new_instance, $resetedTime, $row['penalizacion_deletreo']);
+                $stmt->bind_param("iiiiss", $row['id_alumno'], $evento, $row['nivel'], $new_instance, $resetedTime, $row['penalizacion_deletreo']);
                 $stmt->execute();
             }
         }
 
         echo json_encode(['success' => true]);
     } elseif (isset($data['edit'])) {
-        // Manejo de edición del tiempo de deletreo
-        $performance_id = $data['performance_id'];
+        $id_participante = $data['id_participante'];
         $new_time = $data['new_time'];
 
-        $query = "UPDATE performance SET tiempo_deletreo = ? WHERE id = ?";
+        $query = "UPDATE participantes SET tiempo_deletreo = ? WHERE id_participante = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $new_time, $performance_id);
+        $stmt->bind_param("si", $new_time, $id_participante);
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {
@@ -54,44 +56,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Obtener los parámetros de la solicitud AJAX para la tabla
 $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : '';
 $instancia = isset($_GET['instancia']) ? $_GET['instancia'] : '';
 
-// Construir la consulta SQL con los filtros aplicados
-$sql = "SELECT alumnos.id as alumno_id, alumnos.nombre, performance.id as performance_id, performance.tiempo_deletreo, performance.penalizacion_deletreo, alumnos.nivel_id, performance.instancia_id
+$sql = "SELECT alumnos.id_alumno as id_alumno, alumnos.nombre, participantes.id_participante as id_participante, participantes.tiempo_deletreo, participantes.penalizacion_deletreo, participantes.nivel, participantes.instancia_alcanzada
         FROM alumnos
-        JOIN performance ON alumnos.id = performance.alumno_id";
+        JOIN participantes ON alumnos.id_alumno = participantes.id_alumno
+        WHERE participantes.id_evento = $evento AND participantes.fallo = 0";
 
 // Aplicar filtros si se proporcionan
 $filters = [];
 if ($nivel) {
-    $filters[] = "alumnos.nivel_id = '" . $conn->real_escape_string($nivel) . "'";
+    $filters[] = "participantes.nivel = '" . $conn->real_escape_string($nivel) . "'";
 }
 if ($instancia) {
-    $filters[] = "performance.instancia_id = '" . $conn->real_escape_string($instancia) . "'";
+    $filters[] = "participantes.instancia_alcanzada = '" . $conn->real_escape_string($instancia) . "'";
 }
 
 if (!empty($filters)) {
-    $sql .= " WHERE " . implode(" AND ", $filters);
+    $sql .= " AND " . implode(" AND ", $filters);
 }
 
 // Ordenar por tiempo de menor a mayor
-$sql .= " ORDER BY CAST(performance.tiempo_deletreo AS UNSIGNED) ASC";
+$sql .= " ORDER BY CAST(participantes.tiempo_deletreo AS UNSIGNED) ASC";
 
 $result = $conn->query($sql);
 
-// Generar el contenido de la tabla basado en la consulta
 $tableRows = "";
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $tableRows .= "<tr>";
         $tableRows .= "<td>" . htmlspecialchars($row["nombre"]) . "</td>";
-        $tableRows .= "<td><input type='text' class='form-control edit-time' value='" . htmlspecialchars($row["tiempo_deletreo"]) . "' disabled data-id='" . htmlspecialchars($row["performance_id"]) . "'></td>";
+        $tableRows .= "<td><input type='text' class='form-control edit-time' value='" . htmlspecialchars($row["tiempo_deletreo"]) . "' disabled data-id='" . htmlspecialchars($row["id_participante"]) . "'></td>";
         $tableRows .= "<td>" . htmlspecialchars($row["penalizacion_deletreo"]) . "</td>";
-        $tableRows .= "<td>" . htmlspecialchars($row["nivel_id"]) . "</td>";
-        $tableRows .= "<td>" . htmlspecialchars($row["instancia_id"]) . "</td>";
-        $tableRows .= "<td><input type='checkbox' name='select[]' value='" . htmlspecialchars($row["performance_id"]) . "'></td>";
+        $tableRows .= "<td>" . htmlspecialchars($row["nivel"]) . "</td>";
+        $tableRows .= "<td>" . htmlspecialchars($row["instancia_alcanzada"]) . "</td>";
+        $tableRows .= "<td><input type='checkbox' name='select[]' value='" . htmlspecialchars($row["id_participante"]) . "'></td>";
         $tableRows .= "<td><button type='button' class='btn btn-sm btn-warning' onclick='editarTiempo(this)'>Editar</button></td>";
         $tableRows .= "<td><button type='button' class='btn btn-sm btn-success' onclick='guardarTiempo(this)' disabled>Guardar cambios</button></td>";
         $tableRows .= "</tr>";
@@ -177,6 +177,7 @@ $conn->close();
                 </div>
                 <div class="col ms-auto d-flex justify-content-end align-items-center">
                     <button id="filterButton" type="button" class="btn btn-primary" onclick="filterResults()">Mostrar Cambios</button>
+                    <button id="botonGuardar" type="button" class="btn btn-primary" onclick="guardarSeleccion()">Guardar</button>
                 </div>
             </div>
 
@@ -197,9 +198,6 @@ $conn->close();
                     <?php echo $tableRows; ?>
                 </tbody>
             </table>
-            <div class="text-center">
-                <button id="botonGuardar" type="button" class="btn btn-primary" onclick="guardarSeleccion()">Guardar</button>
-            </div>
         </form>
     </div>
 
@@ -213,7 +211,7 @@ $conn->close();
             var tableBody = document.getElementById('participant-table-body');
             
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '?nivel=' + nivel + '&instancia=' + instancia + '&ajax=1', true);
+            xhr.open('GET', '?id_evento=<?php echo $evento ?>&nivel=' + nivel + '&instancia=' + instancia + '&ajax=1', true);
             xhr.onload = function() {
                 if (xhr.status === 200) {
                     tableBody.innerHTML = xhr.responseText;
@@ -240,7 +238,7 @@ $conn->close();
                     var response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         alert('Datos guardados correctamente.');
-                        filterResults(); // Actualizar la tabla después de guardar
+                        filterResults();
                     } else {
                         alert('Error al guardar los datos: ' + response.error);
                     }
@@ -263,12 +261,12 @@ $conn->close();
         function guardarTiempo(button) {
             var row = button.closest('tr');
             var timeInput = row.querySelector('.edit-time');
-            var performanceId = timeInput.getAttribute('data-id');
+            var id_participante = timeInput.getAttribute('data-id');
             var newTime = timeInput.value;
 
             var data = {
                 edit: true,
-                performance_id: performanceId,
+                id_participante: id_participante,
                 new_time: newTime
             };
 
@@ -280,7 +278,7 @@ $conn->close();
                     var response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         alert('Tiempo actualizado correctamente.');
-                        filterResults(); // Actualizar la tabla después de guardar
+                        filterResults();
                     } else {
                         alert('Error al actualizar el tiempo: ' + response.error);
                     }

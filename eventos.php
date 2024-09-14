@@ -8,33 +8,34 @@ if (!isset($_SESSION['current_index'])) {
 }
 $currentIndex = $_SESSION['current_index'];
 
-$certamen = isset($_GET['certamen_id']) ? intval($_GET['certamen_id']) : 0;
-// $certamen = 1;
+$evento = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+// echo $evento;
+if ($evento == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}
 $sql = "SELECT 
-            pe.id AS performance_id, 
-            ce.nombre AS concurso, 
+            e.nombre_evento AS evento, 
             i.nombre AS institucion, 
-            i.logo_path AS logo, 
-            a.nombre AS alumno, 
-            p.nombre AS profesor_nombre, 
-            ins.id AS instancia, 
-            a.nivel_id AS nivel,
-            a.certamen_id AS certamen_id, 
-            pe.tiempo_deletreo AS tiempo_deletreo, 
-            pe.tiempo_oracion AS tiempo_oracion, 
-            pe.tiempo_final AS tiempo_final,
-            pe.penalizacion_deletreo AS penalizacion_deletreo,
-            pe.penalizacion_oracion AS penalizacion_oracion,
-            pe.penalizaciones_totales AS penalizaciones,
-            pe.descalificados AS descalificados
-        FROM performance pe
-        JOIN alumnos a ON pe.alumno_id = a.id
-        JOIN instituciones i ON a.institucion_id = i.id
-        JOIN profesores p ON a.profesor_id = p.id
-        JOIN instancias ins ON pe.instancia_id = ins.id
-        JOIN certamenes ce ON ins.certamen_id = ce.id
-        WHERE a.certamen_id = $certamen
-        ORDER BY ins.id ASC, a.nivel_id ASC
+            i.logo AS logo, 
+            a.nombre AS alumno,
+            pr.nombre AS profesor_nombre, 
+            pa.id_participante AS id_participante,
+            pa.instancia_alcanzada AS instancia_alcanzada, 
+            pa.nivel AS nivel,
+            pa.id_evento AS id_evento, 
+            pa.tiempo_deletreo AS tiempo_deletreo, 
+            pa.tiempo_oracion AS tiempo_oracion,
+            pa.penalizacion_deletreo AS penalizacion_deletreo,
+            pa.penalizacion_oracion AS penalizacion_oracion,
+            pa.fallo AS descalificados
+        FROM participantes pa
+        JOIN alumnos a ON pa.id_alumno = a.id_alumno
+        JOIN instituciones i ON a.id_institucion = i.id_institucion
+        JOIN profesores pr ON a.id_profesor = pr.id_profesor
+        JOIN eventos e ON pa.id_evento = e.id_evento
+        WHERE pa.id_evento = $evento
+        ORDER BY pa.nivel ASC
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -44,25 +45,23 @@ if (!$result) {
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $performance_id = $row['performance_id'];
-    $concurso = $row['concurso'];
+    $concurso = $row['evento'];
     $institucion = $row['institucion'];
     $logo = $row['logo'];
     $alumno = $row['alumno'];
     $profesor = $row['profesor_nombre'];
-    $instance = $row['instancia'];
+    $id_participante = $row['id_participante'];
+    $instance = $row['instancia_alcanzada'];
     $nivel = $row['nivel'];
-    $tiempo_final = $row['tiempo_final'];
-    $penalizaciones = $row['penalizaciones'];
     $descalificados = $row['descalificados'];
 
     // Valores específicos para nivel 3
     $tiempo_deletreo = $row['tiempo_deletreo'] ?? '00:00';
-    $penalizacion_deletreo = $row['penalizacion_deletreo'] ?? 0;
     $tiempo_oracion = $row['tiempo_oracion'] ?? '00:00';
+    $penalizacion_deletreo = $row['penalizacion_deletreo'] ?? 0;
     $penalizacion_oracion = $row['penalizacion_oracion'] ?? 0;
 
-    $deshabilitarBotones = $tiempo_final > '00:00';
+    $deshabilitarBotones = $tiempo_deletreo > '00:00';
 } else {
     $concurso = "No data";
     $institucion = "No data";
@@ -71,8 +70,6 @@ if ($result && $result->num_rows > 0) {
     $profesor = "No data";
     $instance = "N/A";
     $nivel = "N/A";
-    $tiempo_final = "00:00";
-    $penalizaciones = 0;
     $descalificados = 0;
 
     // Valores por defecto para nivel 3
@@ -105,20 +102,23 @@ $conn->close();
     <div class="header-logo"><img src="./styles/images/logo.png" alt=""></div>
     <!-- <div class="header-title"></div> -->
     <div class="header-sign">
-    <a href="./verificacion.php">
-        <button class="button_login">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <a href="./verificacion.php?id_evento=<?php echo $evento?>">
+        <button class="button_instances">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-          <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+          <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
+          <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
+          <path d="M3.5 17.5l1.5 1.5l2.5 -2.5" />
+          <path d="M11 6l9 0" />
+          <path d="M11 12l9 0" />
+          <path d="M11 18l9 0" />
         </svg>
         </button>
     </a>
     </div>
     <div class="header-sign">
         <a href="./index.html">
-            <button class="button_login">
+            <button class="button_index">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#fb0" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
               <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
@@ -189,7 +189,7 @@ $conn->close();
     };?></div>
     <div class="sub-main-container penalty-container">
         <div class="sub-tittle penalty-title">Penalty</div>
-        <div class="sub-value penalty-value"><?php echo $penalizaciones; ?></div>
+        <div class="sub-value penalty-value"><?php echo $penalizacion_deletreo; ?></div>
     </div>
     <div class="sub-main-container time-container">
         <div class="sub-tittle time-title">Time</div>
@@ -197,11 +197,11 @@ $conn->close();
     </div>
 </section>
 <section id="botones">
-    <button id="startStop" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Start</button>
+    <button id="startStop" class="boton-estilo" >Start</button>
     <button id="reset" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Reset</button>
     <button id="penaltyM" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>P -</button>
     <button id="penaltyP" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>P +</button>
-    <button id="guardar" class="boton-estilo" <?php echo $deshabilitarBotones ? 'disabled' : ''; ?>>Guardar</button>
+    <button id="guardar" class="boton-estilo">Guardar</button>
     <button id="prev" class="boton-estilo">Anterior</button>
     <button id="next" class="boton-estilo">Siguiente</button>
     <button id="ranking" class="boton-estilo">Ranking</button>
@@ -219,7 +219,7 @@ $conn->close();
 <script src="./js/boostrapPoppeJs.js"></script>
 <script src="./js/boostrapMinJs.js"></script>
 <script>
-    console.log(<?php $certamen?>);
+    console.log(<?php $evento?>);
     document.addEventListener("DOMContentLoaded", function() {
         // Variables globales
         let firstSavedTime;
@@ -238,7 +238,7 @@ $conn->close();
         let saved = false;
         let level = <?php echo isset($nivel) ? json_encode($nivel) : 'null'; ?>;
         let descalificado = <?php echo isset($descalificados) ? json_encode($descalificados) : 0 ?>;
-        let idActual = <?php echo $row['performance_id'] ?>;
+        let idActual = <?php echo $row['id_participante'] ?>;
         console.log('Level: ' + level);
         // Función para habilitar/deshabilitar botones
         function togglePenaltyButton(enable) {
@@ -420,7 +420,7 @@ $conn->close();
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        performance_id: <?php echo json_encode($performance_id); ?>,
+                        id_participante: <?php echo json_encode($id_participante); ?>,
                         tiempo_deletreo: formattedTime,
                         penalizacion_deletreo: penaltyValue,
                     })
@@ -453,7 +453,7 @@ $conn->close();
                 document.getElementById("startStop").click();
             } else if (event.key === "Enter") {
                 reiniciarCronometro();
-                console.log('Acabas de apretar: R');
+                console.log('Acabas de apretar: Enter');
                 document.getElementById("startStop").innerText = "Start";
             } else if (event.key === "ArrowLeft") {
                 event.preventDefault();
@@ -477,20 +477,20 @@ $conn->close();
                 }
             } else if (event.key === "r" || event.key === "R") {
                 console.log('Acabas de apretar: R');
-                window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
+                window.location.href = `ranking.php?id_evento=<?php echo $evento?>&nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
             } else if (event.key === "f" || event.key === "F"){
                 console.log('Acabas de apretar: F');
                 document.getElementById("deleted").click();
             }
         });
         document.getElementById("prev").addEventListener("click", function() {
-            window.location.href = "navigation.php?action=prev";
+            window.location.href = "navigation.php?id_evento=<?php echo $evento?>&action=prev";
         });
         document.getElementById("next").addEventListener("click", function() {
-            window.location.href = "navigation.php?action=next";
+            window.location.href = "navigation.php?id_evento=<?php echo $evento?>&action=next";
         });
         document.getElementById("ranking").addEventListener("click", function() {
-            window.location.href = `ranking.php?nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
+            window.location.href = `ranking.php?id_evento=<?php echo $evento?>&nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
         });
         togglePenaltyButton(false); // Deshabilitar botón P+ y botón de guardar al cargar la página
     });
