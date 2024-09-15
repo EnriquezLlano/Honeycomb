@@ -1,3 +1,10 @@
+<?php 
+$eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
+
+if ($eventoId == 0) {
+    echo "No se ha seleccionado un evento válido.";
+    exit;
+}?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -59,9 +66,9 @@
         <h1>Menú</h1>
         <div class="btn-group">
             <a href="index.php" class="btn btn-start">Inicio</a>
-            <a href="inscripcionAlumno.php" class="btn btn-custom">Registrar Alumno</a>
-            <a href="inscripcionProfesor.php" class="btn btn-custom">Registrar Profesor</a>
-            <a href="inscripcionInstitucion.php" class="btn btn-custom">Registrar Institución</a>
+            <a href="inscripcionAlumno.php?id_evento=<?php echo $eventoId ?>" class="btn btn-custom">Registrar Alumno</a>
+            <a href="inscripcionProfesor.php?id_evento=<?php echo $eventoId ?>" class="btn btn-custom">Registrar Profesor</a>
+            <a href="inscripcionInstitucion.php?id_evento=<?php echo $eventoId ?>" class="btn btn-custom">Registrar Institución</a>
         </div>
     </div>
 

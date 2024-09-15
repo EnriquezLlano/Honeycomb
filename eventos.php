@@ -104,7 +104,7 @@ $conn->close();
     <div class="header-sign">
     <a href="./verificacion.php?id_evento=<?php echo $evento?>">
         <button class="button_instances">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#212121" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <path d="M3.5 5.5l1.5 1.5l2.5 -2.5" />
           <path d="M3.5 11.5l1.5 1.5l2.5 -2.5" />
@@ -119,7 +119,7 @@ $conn->close();
     <div class="header-sign">
         <a href="./index.html">
             <button class="button_index">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#fb0" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.8" stroke="#212121" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
               <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
               <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
@@ -131,9 +131,9 @@ $conn->close();
 </header>
 <!-- Data Section -->
 <section>
-    <div class="contenedor">
+    <!-- <div class="contenedor">
         <h4 id="Titulo">Escuela Técnica "Carmen Molina de Llano"</h4>
-    </div>
+    </div> -->
     <div class="certamen">
         <h1 id="banner"><?php echo $concurso; ?></h1>
     </div>
@@ -156,29 +156,34 @@ $conn->close();
             <div class="nombre"><?php echo $profesor; ?> </div>
         </div>
     </div>
-    <!-- Sección específica para nivel 3 -->
     <div class="container">
         <div class="info" id="level3">
             <div class="etiqueta">Tiempo:</div>
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
             <div class="etiqueta">Penalización:</div>
             <div class="nombre"><?php echo $penalizacion_deletreo; ?> </div>
-            <!-- <div class="etiqueta">Oración:</div>
+            <div class="etiqueta">Oración:</div>
             <div class="nombre"><?php echo $tiempo_oracion; ?></div>
             <div class="etiqueta">Penalización:</div>
-            <div class="nombre"><?php echo $penalizacion_oracion; ?> </div> -->
+            <div class="nombre"><?php echo $penalizacion_oracion; ?> </div>
         </div>
     </div>
 </section>
 
-<section class="main-container" id="deleted-container">
+<section class="main-container">
     <div class="sub-main-container level-container">
         <div class="sub-tittle level-title">Level</div>
-        <div class="sub-value level-value"><?php echo $nivel; ?></div>
+        <div class="sub-value-container">
+          <div class="sub-value-border"></div>
+          <div class="sub-value"><?php echo $nivel; ?></div>
+        </div>
     </div>
     <div class="sub-main-container round-container">
         <div class="sub-tittle round-title">Round</div>
-        <div class="sub-value round-value"><?php echo $instance; ?></div>
+        <div class="sub-value-container">
+          <div class="sub-value-border"></div>
+          <div class="sub-value"><?php echo $instance; ?></div>
+        </div>
     </div>
     <div id="cronometro"><?php 
     if ($nivel == 3){
@@ -189,11 +194,17 @@ $conn->close();
     };?></div>
     <div class="sub-main-container penalty-container">
         <div class="sub-tittle penalty-title">Penalty</div>
-        <div class="sub-value penalty-value"><?php echo $penalizacion_deletreo; ?></div>
+        <div class="sub-value-container">
+          <div class="sub-value-border"></div>
+          <div class="sub-value"><?php echo $penalizacion_deletreo; ?></div>
+        </div>
     </div>
     <div class="sub-main-container time-container">
         <div class="sub-tittle time-title">Time</div>
-        <div class="sub-value time-value">45"</div>
+        <div class="sub-value-container">
+          <div class="sub-value-border"></div>
+          <div class="sub-value">45"</div>
+        </div>
     </div>
 </section>
 <section id="botones">
