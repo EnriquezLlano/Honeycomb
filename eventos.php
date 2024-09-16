@@ -35,7 +35,7 @@ $sql = "SELECT
         JOIN profesores pr ON a.id_profesor = pr.id_profesor
         JOIN eventos e ON pa.id_evento = e.id_evento
         WHERE pa.id_evento = $evento
-        ORDER BY pa.nivel ASC
+        ORDER BY pa.instancia_alcanzada ASC, pa.nivel ASC
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -140,7 +140,7 @@ $conn->close();
     <div class="container">
         <div class="info" id="">
             <div class="logo">
-                <img src="<?php echo $logo; ?>" alt="Logo de la Institución">
+                <img src="./styles/images/logoInstitucion/<?php echo $logo; ?>" alt="Logo de la Institución">
             </div>
             <div class="info">
                 <div class="etiqueta">Institución: </div>
@@ -187,7 +187,6 @@ $conn->close();
     </div>
     <div id="cronometro"><?php 
     if ($nivel == 3){
-        // echo $tiempo_final;
         echo $tiempo_deletreo;
     }else{
         echo $tiempo_deletreo;  
@@ -196,14 +195,14 @@ $conn->close();
         <div class="sub-tittle penalty-title">Penalty</div>
         <div class="sub-value-container">
           <div class="sub-value-border"></div>
-          <div class="sub-value"><?php echo $penalizacion_deletreo; ?></div>
+          <div class="sub-value penalty-value"><?php echo $penalizacion_deletreo; ?></div>
         </div>
     </div>
     <div class="sub-main-container time-container">
         <div class="sub-tittle time-title">Time</div>
         <div class="sub-value-container">
           <div class="sub-value-border"></div>
-          <div class="sub-value">45"</div>
+          <div class="sub-value"><?php echo ($instance == 1) ? '60"' : '45"' ;?></div>
         </div>
     </div>
 </section>
@@ -302,7 +301,6 @@ $conn->close();
                     startedTime = !startedTime;
                     console.log("startedTime:", startedTime);
                 } else {
-                    // Manejo para niveles diferentes a 3
                     running = true;
                     startTime = Date.now() - elapsedTime;
                     timer = setInterval(actualizarCronometro, 10);
@@ -503,7 +501,7 @@ $conn->close();
         document.getElementById("ranking").addEventListener("click", function() {
             window.location.href = `ranking.php?id_evento=<?php echo $evento?>&nivel=<?php echo $nivel; ?>&instancia=<?php echo $instance; ?>`;
         });
-        togglePenaltyButton(false); // Deshabilitar botón P+ y botón de guardar al cargar la página
+        togglePenaltyButton(false);
     });
 </script>
 </body>

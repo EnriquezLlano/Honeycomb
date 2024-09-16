@@ -242,8 +242,8 @@ $resultInstituciones = $conn->query($sqlInstituciones);
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert(data.message);
-                window.location.reload(); // Asegúrate de definir eventoId
+                //alert(data.message);
+                window.location.reload();
             } else {
                 alert('Error: ' + data.message);
             }

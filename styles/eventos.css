@@ -33,7 +33,7 @@ body {
 .button_index {
   text-decoration: none;
   background-color: transparent;
-  border: solid 2px #fb0;
+  border: solid 2px #ffbd59;
   border-radius: 10px;
   border: none;
   height: fit-content;
@@ -49,7 +49,7 @@ body {
 .button_instances{
   text-decoration: none;
   background-color: transparent;
-  border: solid 2px #fb0;
+  border: solid 2px #ffbd59;
   border-radius: 10px;
   border: none;
   height: fit-content;
@@ -64,7 +64,7 @@ body {
 }
 .button_index:hover, .button_instances:hover {
   transition: 0.05s;
-  background-color: #fb0;
+  background-color: #ffbd59;
   border: solid 2px #212121;
   .icon {
     transition: 0.23s;
@@ -195,7 +195,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items:center;
   margin: 0;
   text-align: center;
   margin: 0px;
@@ -221,6 +221,7 @@ body {
 }
 .sub-value-container {
   position: relative;
+  bottom: 20px;
   width: 160px;
   height: 140px;
   display: flex;
@@ -229,6 +230,7 @@ body {
 
 .sub-value-border {
   position: absolute;
+  bottom: 20px;
   top: 0;
   left: 0;
   width: 100%;
