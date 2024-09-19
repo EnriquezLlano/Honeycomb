@@ -104,7 +104,7 @@ if (isset($_GET['ajax'])) {
     echo $tableRows;
     exit();
 }
-
+$urlEventos = './eventos.php?id_evento=' . $evento;
 $conn->close();
 ?>
 
@@ -176,6 +176,7 @@ $conn->close();
                     </select>
                 </div>
                 <div class="col ms-auto d-flex justify-content-end align-items-center">
+                    <!-- <button id="volverEventos" class="btn btn-sm btn-success" onclick="window.location.href='javascript:history.back()'">Eventos</button> -->
                     <button id="filterButton" type="button" class="btn btn-primary" onclick="filterResults()">Mostrar Cambios</button>
                     <button id="botonGuardar" type="button" class="btn btn-primary" onclick="guardarSeleccion()">Guardar</button>
                 </div>

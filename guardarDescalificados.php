@@ -2,14 +2,14 @@
 require './conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = $_POST['id'];
+    $id = $_POST['id_participante'];
     descalificarParticipante($id);
 }
 
 function descalificarParticipante($id) {
-    global $conn; // Usa la conexión global a la base de datos
+    global $conn;
 
-    $sql = "UPDATE participantes SET fallo = TRUE WHERE id_participante = ?";
+    $sql = "UPDATE participantes SET fallo = NOT fallo WHERE id_participante = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
 

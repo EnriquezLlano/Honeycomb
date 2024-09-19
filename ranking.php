@@ -97,6 +97,7 @@ $conn->close();
 
 <div class="container button-container">
     <button id="backToEvents" class="btn" onclick="window.location.href='javascript:history.back()';">Volver a Eventos</button>
+    <button id="winner" class="btn" onclick="window.location.href='./winners.php?id_evento=<?php echo $evento?>'">Ver ganadores</button>
     <button id="printToExcel" class="btn" onclick="exportToExcel();">Imprimir</button>
 </div>
 
