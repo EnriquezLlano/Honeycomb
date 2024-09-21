@@ -145,6 +145,7 @@ body {
 
 .info {
   display: flex;
+  text-wrap: nowrap;
   align-items: center;
 }
 

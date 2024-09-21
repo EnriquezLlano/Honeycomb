@@ -11,20 +11,42 @@ if ($conn->connect_error) {
 
 $eventoId = isset($_GET['id_evento']) ? intval($_GET['id_evento']) : 0;
 
-// echo "ID del evento: " . $eventoId;
-
 if ($eventoId == 0) {
     echo "No se ha seleccionado un evento válido.";
     exit;
 }
 
 // Consultar opciones de profesores
-$sqlProfesores = "SELECT id_profesor, nombre FROM profesores";
-$resultProfesores = $conn->query($sqlProfesores);
+$sqlProfesores = "
+    SELECT p.id_profesor AS id_profesor, p.nombre AS nombre
+    FROM profesores p
+    INNER JOIN instituciones i ON i.id_institucion = p.id_institucion
+    WHERE i.id_evento = ?
+";
+
+// Prepara la consulta
+$stmtProfesores = $conn->prepare($sqlProfesores);
+if ($stmtProfesores) {
+    // Enlazar el parámetro
+    $stmtProfesores->bind_param("i", $eventoId); // "i" indica que es un entero
+    $stmtProfesores->execute();
+    $resultProfesores = $stmtProfesores->get_result();
+} else {
+    echo "Error en la preparación de la consulta de profesores: " . $conn->error;
+    exit;
+}
 
 // Consultar opciones de instituciones
-$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones";
-$resultInstituciones = $conn->query($sqlInstituciones);
+$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones WHERE id_evento = ?";
+$stmtInstituciones = $conn->prepare($sqlInstituciones);
+if ($stmtInstituciones) {
+    $stmtInstituciones->bind_param("i", $eventoId);
+    $stmtInstituciones->execute();
+    $resultInstituciones = $stmtInstituciones->get_result();
+} else {
+    echo "Error en la preparación de la consulta de instituciones: " . $conn->error;
+    exit;
+}
 
 // Registrar nuevo alumno
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -62,9 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmtInsert->close();
 }
 
+// Cerrar los statements y la conexión
+$stmtProfesores->close();
+$stmtInstituciones->close();
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -119,7 +143,7 @@ $conn->close();
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email">
             </div>
             <div class="mb-3">
                 <label for="profesor_id" class="form-label">Profesor</label>
