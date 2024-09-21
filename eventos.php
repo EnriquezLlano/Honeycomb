@@ -26,7 +26,6 @@ $sql = "SELECT
             pa.id_evento AS id_evento, 
             pa.tiempo_deletreo AS tiempo_deletreo, 
             pa.tiempo_oracion AS tiempo_oracion,
-            pa.tiempo_total AS tiempo_total,
             pa.penalizacion_deletreo AS penalizacion_deletreo,
             pa.penalizacion_oracion AS penalizacion_oracion,
             pa.fallo AS descalificados
@@ -36,7 +35,7 @@ $sql = "SELECT
         JOIN profesores pr ON a.id_profesor = pr.id_profesor
         JOIN eventos e ON pa.id_evento = e.id_evento
         WHERE pa.id_evento = $evento
-        ORDER BY pa.instancia_alcanzada ASC, pa.nivel ASC
+        ORDER BY pa.instancia_alcanzada ASC, pa.nivel ASC, pa.id_participante
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -59,7 +58,7 @@ if ($result && $result->num_rows > 0) {
     // Valores específicos para nivel 3
     $tiempo_deletreo = $row['tiempo_deletreo'] ?? '00:00';
     $tiempo_oracion = $row['tiempo_oracion'] ?? '00:00';
-    $tiempo_total = $row['tiempo_total'] ?? '00:00';
+    // $tiempo_total = $row['tiempo_total'] ?? '00:00';
     $penalizacion_deletreo = $row['penalizacion_deletreo'] ?? 0;
     $penalizacion_oracion = $row['penalizacion_oracion'] ?? 0;
 
@@ -77,12 +76,16 @@ if ($result && $result->num_rows > 0) {
     // Valores por defecto para nivel 3
     $tiempo_deletreo = '00:00';
     $tiempo_oracion = '00:00';
-    $tiempo_total = '00:00';
     $penalizacion_deletreo = 0;
     $penalizacion_oracion = 0;
 
     $deshabilitarBotones = false;
 }
+
+$time1 = str_replace(':', '.', $tiempo_deletreo);
+$time2 = str_replace(':', '.', $tiempo_oracion);
+$tiempo_total_float = ((float)$time1 + 5 * $penalizacion_deletreo)+ ((float)$time2 + 5 * $penalizacion_oracion);
+$tiempo_total = str_replace('.', ':', sprintf('%02d:%02d', floor($tiempo_total_float), ($tiempo_total_float * 100) % 100));
 
 $conn->close();
 ?>
@@ -134,20 +137,17 @@ $conn->close();
 </header>
 <!-- Data Section -->
 <section>
-    <!-- <div class="contenedor">
-        <h4 id="Titulo">Escuela Técnica "Carmen Molina de Llano"</h4>
-    </div> -->
     <div class="certamen">
         <h1 id="banner"><?php echo $concurso; ?></h1>
     </div>
     <div class="container">
         <div class="info" id="">
-            <div class="logo">
-                <img src="./styles/images/logoInstitucion/<?php echo $logo; ?>" alt="Logo de la Institución">
-            </div>
             <div class="info">
                 <div class="etiqueta">Institución: </div>
                 <div class="nombre"><?php echo $institucion; ?></div>
+            </div>
+            <div class="logo">
+                <img src="./styles/images/logoInstitucion/<?php echo $logo; ?>" alt="Logo de la Institución">
             </div>
         </div>
     </div>
@@ -269,13 +269,13 @@ $conn->close();
     }
 
     function updateTime() {
-        console.clear();
-        console.log("startTime: " + startTime);
+        // console.clear();
+        // console.log("startTime: " + startTime);
         let currentTime = new Date().getTime() - startTime;
-        console.log("currentTime " + currentTime);
+        // console.log("currentTime " + currentTime);
         console.log(isDeletreoTime ? "elapsedDeletro" + elapsedTimeDeletreo : "elapsedOracion" + elapsedTimeOracion);
         let totalElapsedTime = isDeletreoTime ? elapsedTimeDeletreo + currentTime : elapsedTimeOracion + currentTime;
-        console.log("totalElapsed" + totalElapsedTime);
+        // console.log("totalElapsed" + totalElapsedTime);
         document.getElementById("cronometro").innerText = formatTime(totalElapsedTime);
     }
 
@@ -364,6 +364,24 @@ $conn->close();
         }
     });
     document.getElementById("guardar").addEventListener("click", function() {
+        let formatedTimeDeletreoWithPenaltys = formatTime(elapsedTimeDeletreo + 5000 * penalizacionDeletreo);
+        let formatedTimeOracionWithPenaltys = formatTime(elapsedTimeOracion + 5000 * penalizacionOracion);
+
+        // const tiempo1 = formatedTimeDeletreoWithPenaltys;
+        // const tiempo2 = formatedTimeOracionWithPenaltys;
+        // const [segundos1, milisegundos1] = tiempo1.split(':').map(Number);
+        // const [segundos2, milisegundos2] = tiempo2.split(':').map(Number);
+        // const totalMilisegundos1 = (segundos1 * 1000) + milisegundos1;
+        // const totalMilisegundos2 = (segundos2 * 1000) + milisegundos2;
+        // console.log("milisegundos totales de deletreo: " + totalMilisegundos1);
+        // console.log("milisegundos totales de oracion: " + totalMilisegundos2);
+        // const milisegundosTotales = totalMilisegundos1 + totalMilisegundos2;
+        // console.log(milisegundosTotales);
+
+        // const tiempo_total = formatTime(milisegundosTotales);
+        // console.log("tiempo_total_sumado: " + tiempo_total);
+        // console.log("tiempo_total_formateado: " + formatTime((elapsedTimeDeletreo + 5000 * penalizacionDeletreo) + (elapsedTimeOracion + 5000 * penalizacionOracion)));
+
         let data = {
             id_participante: <?php echo $id_participante; ?>,
             tiempo_deletreo: formatTime(elapsedTimeDeletreo),
@@ -384,6 +402,7 @@ $conn->close();
         .then(result => {
             if (result.success) {
                 alert("Datos guardados correctamente.");
+                window.location.reload();
             } else {
                 alert("Error al guardar los datos.");
             }

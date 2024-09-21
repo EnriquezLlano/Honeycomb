@@ -18,7 +18,7 @@ if ($eventoId == 0) {
     exit;
 }
 // Consultar opciones de instituciones
-$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones";
+$sqlInstituciones = "SELECT id_institucion, nombre FROM instituciones WHERE id_evento = $eventoId";
 $resultInstituciones = $conn->query($sqlInstituciones);
 
 // Insertar datos del profesor
@@ -91,7 +91,7 @@ $conn->close();
             </div>
             <div class="mb-3">
                 <label for="nombre" class="form-label">Correo Electronico</label>
-                <input type="text" class="form-control" id="email" name="email" required>
+                <input type="text" class="form-control" id="email" name="email">
             </div>
             <div class="mb-3">
                 <label for="institucion_id" class="form-label">Institución</label>
