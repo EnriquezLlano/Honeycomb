@@ -161,14 +161,14 @@ $conn->close();
     </div>
     <div class="container">
         <div class="info" id="level3">
-            <div class="etiqueta">Tiempo:</div>
+            <div class="etiqueta">Deletreo:</div>
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
             <div class="etiqueta">Penalización:</div>
             <div class="nombre"><?php echo $penalizacion_deletreo; ?> </div>
-            <div class="etiqueta">Oración:</div>
-            <div class="nombre"><?php echo $tiempo_oracion; ?></div>
-            <div class="etiqueta">Penalización:</div>
-            <div class="nombre"><?php echo $penalizacion_oracion; ?> </div>
+            <div class="etiqueta tercer_nivel">Oración:</div>
+            <div class="nombre tercer_nivel"><?php echo $tiempo_oracion; ?></div>
+            <div class="etiqueta tercer_nivel">Penalización:</div>
+            <div class="nombre tercer_nivel"><?php echo $penalizacion_oracion; ?> </div>
         </div>
     </div>
 </section>
@@ -232,6 +232,15 @@ $conn->close();
 <script src="./js/boostrapPoppeJs.js"></script>
 <script src="./js/boostrapMinJs.js"></script>
 <script>
+    let nivel = <?php echo $nivel?>;
+    const DATOS_NIVEL_3 = document.querySelectorAll(".tercer_nivel");
+    DATOS_NIVEL_3.forEach(dato => {
+    if (nivel !== 3) {
+        dato.style.display = 'none';
+    }
+});
+</script>
+<script>
     console.log(<?php echo $evento; ?>);
     console.log(<?php echo $descalificados?>);
     let isRunning = false;
@@ -253,15 +262,15 @@ $conn->close();
         } else {
             clearInterval(interval);
             let elapsedTime = new Date().getTime() - startTime;
-            if (isDeletreoTime) {
-                elapsedTimeDeletreo += elapsedTime;
-                document.getElementById("cronometro").innerText = formatTime(elapsedTimeDeletreo);
-                isDeletreoTime = false;
-            } else {
+            if (!isDeletreoTime && nivel == 3) {
                 elapsedTimeOracion += elapsedTime;
                 document.getElementById("cronometro").innerText = formatTime(elapsedTimeOracion);
                 isDeletreoTime = true;
                 document.getElementById("startStop").setAttribute("disabled", "true");
+            } else {
+                elapsedTimeDeletreo += elapsedTime;
+                document.getElementById("cronometro").innerText = formatTime(elapsedTimeDeletreo);
+                isDeletreoTime = false;
             }
             document.getElementById("startStop").innerText = "Start";
             isRunning = false;
@@ -288,13 +297,17 @@ $conn->close();
     // Asignar funcionalidad a los botones
     document.getElementById("startStop").addEventListener("click", toggleCronometro);
     document.getElementById("reset").addEventListener("click", function() {
-        clearInterval(interval);
         isRunning = false;
-        elapsedTimeDeletreo = 0;
-        elapsedTimeOracion = 0;
-        penalizacionDeletreo = 0;
-        penalizacionOracion = 0;
-        isDeletreoTime = true;
+        clearInterval(interval);
+        if (!isDeletreoTime) {
+            penalizacionDeletreo = 0;
+            elapsedTimeDeletreo = 0;
+            isDeletreoTime = true;
+        }else{
+            elapsedTimeOracion = 0;
+            penalizacionOracion = 0;
+            isDeletreoTime = false;   
+        }
         document.getElementById("cronometro").innerText = "00:00";
         document.getElementById("startStop").innerText = "Start";
         document.getElementById("startStop").removeAttribute("disabled");
