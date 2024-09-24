@@ -35,7 +35,7 @@ $sql = "SELECT
         JOIN profesores pr ON a.id_profesor = pr.id_profesor
         JOIN eventos e ON pa.id_evento = e.id_evento
         WHERE pa.id_evento = $evento
-        ORDER BY pa.instancia_alcanzada ASC, pa.nivel ASC, pa.id_participante
+        ORDER BY pa.instancia_alcanzada ASC, pa.nivel ASC, pa.id_participante ASC
         LIMIT 20 OFFSET $currentIndex";
 
 $result = $conn->query($sql);
@@ -146,9 +146,9 @@ $conn->close();
                 <div class="etiqueta">Institución: </div>
                 <div class="nombre"><?php echo $institucion; ?></div>
             </div>
-            <div class="logo">
+            <!-- <div class="logo">
                 <img src="./styles/images/logoInstitucion/<?php echo $logo; ?>" alt="Logo de la Institución">
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="container">
@@ -188,12 +188,7 @@ $conn->close();
           <div class="sub-value"><?php echo $instance; ?></div>
         </div>
     </div>
-    <div id="cronometro"><?php 
-    if ($nivel == 3){
-        echo $tiempo_total;
-    }else{
-        echo $tiempo_deletreo;  
-    };?></div>
+    <div id="cronometro"><?php echo $tiempo_total?></div>
     <div class="sub-main-container penalty-container">
         <div class="sub-tittle penalty-title">Penalty</div>
         <div class="sub-value-container">
@@ -273,6 +268,7 @@ $conn->close();
                 isDeletreoTime = false;
             }
             document.getElementById("startStop").innerText = "Start";
+            updatePenalizacionDisplay();
             isRunning = false;
         }
     }
@@ -300,12 +296,12 @@ $conn->close();
         isRunning = false;
         clearInterval(interval);
         if (!isDeletreoTime) {
-            penalizacionDeletreo = 0;
             elapsedTimeDeletreo = 0;
+            penalizacionOracion = 0;
             isDeletreoTime = true;
         }else{
             elapsedTimeOracion = 0;
-            penalizacionOracion = 0;
+            penalizacionDeletreo = 0;
             isDeletreoTime = false;   
         }
         document.getElementById("cronometro").innerText = "00:00";
