@@ -30,6 +30,7 @@ $sql = "SELECT participantes.id_participante AS id_participante,
                participantes.instancia_alcanzada,
                alumnos.id_profesor, 
                alumnos.id_institucion, 
+               participantes.instancia_alcanzada,
                alumnos.nombre AS nombre_alumno, 
                profesores.nombre AS nombre_profesor, 
                instituciones.nombre AS nombre_institucion
