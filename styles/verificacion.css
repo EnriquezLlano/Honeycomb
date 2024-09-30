@@ -20,3 +20,15 @@ th {
 table > h1, table > .filter-container, table > button{
     background-color: red;
 }
+/* .timesContainer{
+    max-width: 230px;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+} */
+.form-control:first-child{
+    margin-bottom: 2px;
+}
+.form-control:last-child{
+    margin-top: 2px;
+}

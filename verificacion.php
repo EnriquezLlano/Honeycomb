@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : '';
 $instancia = isset($_GET['instancia']) ? $_GET['instancia'] : '';
 
-$sql = "SELECT alumnos.id_alumno as id_alumno, alumnos.nombre, participantes.id_participante as id_participante, participantes.tiempo_deletreo, participantes.penalizacion_deletreo, participantes.nivel, participantes.instancia_alcanzada
+$sql = "SELECT alumnos.id_alumno as id_alumno, alumnos.nombre, participantes.id_participante as id_participante, participantes.tiempo_deletreo, participantes.tiempo_oracion, participantes.penalizacion_deletreo, participantes.nivel, participantes.instancia_alcanzada
         FROM alumnos
         JOIN participantes ON alumnos.id_alumno = participantes.id_alumno
         WHERE participantes.id_evento = $evento AND participantes.fallo = 0";
@@ -85,9 +85,17 @@ $result = $conn->query($sql);
 $tableRows = "";
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
+        $nivelParticipante = $row["nivel"];
+        $tiempoDeletreoParticipante = htmlspecialchars($row["tiempo_deletreo"]);
+        if ($nivelParticipante == 3) {
+            $tiempoOracionParticipante = "<input type='text' class='form-control edit-time' value='" . htmlspecialchars($row["tiempo_oracion"]) . "' disabled data-id='" . htmlspecialchars($row["id_participante"]) . "'>";            
+        }else{
+            $tiempoOracionParticipante = "";
+        }
         $tableRows .= "<tr>";
         $tableRows .= "<td>" . htmlspecialchars($row["nombre"]) . "</td>";
-        $tableRows .= "<td><input type='text' class='form-control edit-time' value='" . htmlspecialchars($row["tiempo_deletreo"]) . "' disabled data-id='" . htmlspecialchars($row["id_participante"]) . "'></td>";
+        $tableRows .= "<td class='timesContainer'><input type='text' class='form-control edit-time' value='" . $tiempoDeletreoParticipante . "' disabled data-id='" . htmlspecialchars($row["id_participante"]) . "'>" . $tiempoOracionParticipante . "</td>";
+        // $tableRows .= "<td class='timesContainer'><input type='text' class='form-control edit-time' value='" . $tiempoDeletreoParticipante . ' - ' . htmlspecialchars($row["tiempo_oracion"]) . "' disabled data-id='" . htmlspecialchars($row["id_participante"]) . "'></td>";
         $tableRows .= "<td>" . htmlspecialchars($row["penalizacion_deletreo"]) . "</td>";
         $tableRows .= "<td>" . htmlspecialchars($row["nivel"]) . "</td>";
         $tableRows .= "<td>" . htmlspecialchars($row["instancia_alcanzada"]) . "</td>";

@@ -27,6 +27,7 @@ $sql = "SELECT participantes.id_participante AS id_participante,
                participantes.id_alumno AS id_alumno, 
                participantes.id_evento AS id_evento, 
                participantes.nivel AS nivel, 
+               participantes.instancia_alcanzada,
                alumnos.id_profesor, 
                alumnos.id_institucion, 
                alumnos.nombre AS nombre_alumno, 
@@ -37,7 +38,7 @@ $sql = "SELECT participantes.id_participante AS id_participante,
         INNER JOIN profesores ON alumnos.id_profesor = profesores.id_profesor
         INNER JOIN instituciones ON alumnos.id_institucion = instituciones.id_institucion
         INNER JOIN eventos ON participantes.id_evento = eventos.id_evento
-        WHERE eventos.id_evento = ?";
+        WHERE eventos.id_evento = ? AND participantes.instancia_alcanzada = 1";
 
 if (!empty($search)) {
     $sql .= " AND alumnos.nombre LIKE ?";

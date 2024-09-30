@@ -143,31 +143,31 @@ $conn->close();
     <div class="container">
         <div class="info" id="">
             <div class="info">
-                <div class="etiqueta">Institución: </div>
+                <div class="etiqueta">Institution: </div>
                 <div class="nombre"><?php echo $institucion; ?></div>
             </div>
-            <!-- <div class="logo">
+            <div class="logo">
                 <img src="./styles/images/logoInstitucion/<?php echo $logo; ?>" alt="Logo de la Institución">
-            </div> -->
+            </div>
         </div>
     </div>
     <div class="container">
         <div class="info" id="participante">
-            <div class="etiqueta">Alumno/a:</div>
+            <div class="etiqueta">Student:</div>
             <div class="nombre"><?php echo $alumno; ?></div>
-            <div class="etiqueta">Referente:</div>
+            <div class="etiqueta">Teacher:</div>
             <div class="nombre"><?php echo $profesor; ?> </div>
         </div>
     </div>
     <div class="container">
         <div class="info" id="level3">
-            <div class="etiqueta">Deletreo:</div>
+            <div class="etiqueta">Spelling:</div>
             <div class="nombre"><?php echo $tiempo_deletreo; ?></div>
-            <div class="etiqueta">Penalización:</div>
+            <div class="etiqueta">Penaltys:</div>
             <div class="nombre"><?php echo $penalizacion_deletreo; ?> </div>
-            <div class="etiqueta tercer_nivel">Oración:</div>
+            <div class="etiqueta tercer_nivel">Sentence:</div>
             <div class="nombre tercer_nivel"><?php echo $tiempo_oracion; ?></div>
-            <div class="etiqueta tercer_nivel">Penalización:</div>
+            <div class="etiqueta tercer_nivel">Penaltys:</div>
             <div class="nombre tercer_nivel"><?php echo $penalizacion_oracion; ?> </div>
         </div>
     </div>
@@ -244,7 +244,7 @@ $conn->close();
     let penalizacionDeletreo = <?php echo $penalizacion_deletreo; ?>;
     let penalizacionOracion = <?php echo $penalizacion_oracion; ?>;
     let interval;
-    let idActual = <?php echo $id_participante;?>;
+    let id_participante = <?php echo $id_participante;?>;
     let descalificado = <?php echo $descalificados;?>;
 
     // Iniciar o detener cronómetro
@@ -350,19 +350,23 @@ $conn->close();
         document.querySelector('.penalty-value').innerText = !isDeletreoTime ? penalizacionDeletreo : penalizacionOracion;
         document.getElementById('cronometro').innerText = formatTime(!isDeletreoTime ? elapsedTimeDeletreo : elapsedTimeOracion);;
     }
-    document.getElementById("delete").addEventListener("click", function(idActual) {
-        console.log(idActual);
-        let data = {
-            id_participante: idActual,
-            falo: descalificado 
-        }
+    document.getElementById("delete").addEventListener("click", function(id_participante) {
+        console.log(id_participante);
+        // let data = {
+        //     id_participante: id_participante,
+        //     fallo: descalificado 
+        // }
+        let descalificar = 1;
         if (confirm("¿Estás seguro de que deseas descalificar a este participante?")) {
+            // Formatear los datos en formato URL-encoded
+            const data = `id_participante=${encodeURIComponent(id_participante)}&fallo=${encodeURIComponent(descalificar)}`;
+
             fetch('./guardarDescalificados.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify(data)
+                body: data  // Enviar los datos como una cadena
             })
             .then(response => response.text())
             .then(data => {
@@ -371,51 +375,36 @@ $conn->close();
             })
             .catch(error => console.error('Error:', error));
         }
+
     });
     document.getElementById("guardar").addEventListener("click", function() {
-        let formatedTimeDeletreoWithPenaltys = formatTime(elapsedTimeDeletreo + 5000 * penalizacionDeletreo);
-        let formatedTimeOracionWithPenaltys = formatTime(elapsedTimeOracion + 5000 * penalizacionOracion);
-
-        // const tiempo1 = formatedTimeDeletreoWithPenaltys;
-        // const tiempo2 = formatedTimeOracionWithPenaltys;
-        // const [segundos1, milisegundos1] = tiempo1.split(':').map(Number);
-        // const [segundos2, milisegundos2] = tiempo2.split(':').map(Number);
-        // const totalMilisegundos1 = (segundos1 * 1000) + milisegundos1;
-        // const totalMilisegundos2 = (segundos2 * 1000) + milisegundos2;
-        // console.log("milisegundos totales de deletreo: " + totalMilisegundos1);
-        // console.log("milisegundos totales de oracion: " + totalMilisegundos2);
-        // const milisegundosTotales = totalMilisegundos1 + totalMilisegundos2;
-        // console.log(milisegundosTotales);
-
-        // const tiempo_total = formatTime(milisegundosTotales);
-        // console.log("tiempo_total_sumado: " + tiempo_total);
-        // console.log("tiempo_total_formateado: " + formatTime((elapsedTimeDeletreo + 5000 * penalizacionDeletreo) + (elapsedTimeOracion + 5000 * penalizacionOracion)));
-
-        let data = {
-            id_participante: <?php echo $id_participante; ?>,
-            tiempo_deletreo: formatTime(elapsedTimeDeletreo),
-            tiempo_oracion: formatTime(elapsedTimeOracion),
-            tiempo_total: formatTime((elapsedTimeDeletreo + 5000 * penalizacionDeletreo) + (elapsedTimeOracion + 5000 * penalizacionOracion)),
-            penalizacion_deletreo: penalizacionDeletreo,
-            penalizacion_oracion: penalizacionOracion
-        };
-    
-        fetch("guardar_tiempos.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                alert("Datos guardados correctamente.");
-                window.location.reload();
-            } else {
-                alert("Error al guardar los datos.");
-            }
-        });
+        if (confirm("¿Esta seguro de que desea guardar este tiempo?")) {
+            let data = {
+                id_participante: <?php echo $id_participante; ?>,
+                tiempo_deletreo: formatTime(elapsedTimeDeletreo),
+                tiempo_oracion: formatTime(elapsedTimeOracion),
+                tiempo_total: $tiempo_total,
+                penalizacion_deletreo: penalizacionDeletreo,
+                penalizacion_oracion: penalizacionOracion
+            };
+        
+            fetch("guardar_tiempos.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert("Datos guardados correctamente.");
+                    window.location.reload();
+                } else {
+                    alert("Error al guardar los datos.");
+                }
+            });            
+        }
     });
     document.addEventListener("DOMContentLoaded", function() {
         document.addEventListener("keydown", function(event) {
