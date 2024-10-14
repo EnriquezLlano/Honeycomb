@@ -1,0 +1,9 @@
+# Ignorar archivos de entorno
+.env
+
+# Ignorar configuraciones locales de IDEs
+.idea/
+.vscode/
+
+# Ignorar SQL
+.sql
